@@ -1,0 +1,22 @@
+# Google Drive
+desktop.ini
+.tmp.drivedownload/
+.tmp.driveupload/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema
+Thumbs.db
+.DS_Store

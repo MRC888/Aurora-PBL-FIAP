@@ -1,0 +1,28 @@
+==============================================================
+PROJETO AURORA - REGISTRO DE EXECUCAO Nº 10
+Data/hora    : 12/09/2026 16:16:06
+Capitao      : Douglas
+Classificacao: HORRIVEL
+==============================================================
+
+DADOS DE TELEMETRIA INFORMADOS
+  Temperatura interna : 24.0 C
+  Temperatura externa : 28.0 C
+  Integridade         : 1 (Boa)
+  Pressao dos tanques : 505.0 psi
+  Energia             : 55.0 %
+  Modulos online      : SIM
+  Capacidade bateria  : 1000.0 kWh
+
+ANALISE ENERGETICA
+  Energia disponivel       : 550.0 kWh
+  Energia perdida (8%)     : 44.0 kWh
+  Energia util             : 506.0 kWh
+  Consumo na decolagem     : 300.0 kWh
+  Energia apos a decolagem : 206.0 kWh (20.6%)
+
+ANALISE ASSISTIDA POR IA
+  Nenhuma discrepancia encontrada.
+
+VEREDITO FINAL: DECOLAGEM ABORTADA
+==============================================================

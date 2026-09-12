@@ -1,0 +1,31 @@
+==============================================================
+PROJETO AURORA - REGISTRO DE EXECUCAO Nº 06
+Data/hora    : 12/09/2026 16:16:06
+Capitao      : Aline
+Classificacao: MEDIO
+==============================================================
+
+DADOS DE TELEMETRIA INFORMADOS
+  Temperatura interna : 29.0 C
+  Temperatura externa : -8.0 C
+  Integridade         : 1 (Boa)
+  Pressao dos tanques : 535.0 psi
+  Energia             : 93.0 %
+  Modulos online      : SIM
+  Capacidade bateria  : 1000.0 kWh
+
+ANALISE ENERGETICA
+  Energia disponivel       : 930.0 kWh
+  Energia perdida (8%)     : 74.4 kWh
+  Energia util             : 855.6 kWh
+  Consumo na decolagem     : 300.0 kWh
+  Energia apos a decolagem : 555.6 kWh (55.6%)
+
+ANALISE ASSISTIDA POR IA
+  Alertas:
+    [!] Pressão de 535 psi já alta com temperatura interna de 29C. Pela lei dos gases a pressão sobe com o aquecimento, podendo ultrapassar 550 psi durante a subida.
+    [!] Diferencial térmico de 37C entre interna e externa. Sugere falha de isolamento térmico ou sensor travado.
+    [!] Temperatura interna de 29C próxima do teto de 30C, e o calor dos motores ainda vai somar durante a decolagem.
+
+VEREDITO FINAL: DECOLAGEM AUTORIZADA
+==============================================================
