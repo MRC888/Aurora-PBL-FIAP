@@ -65,8 +65,9 @@ NOMINAL_TEMP_EXTERNA = 25.0
 NOMINAL_PRESSAO = 500.0
 NOMINAL_ENERGIA = 100.0
 
-# --- MISSAO: CUSTOS PONTUAIS EM % DA BATERIA (upgrade.md 4.1) ---
-CUSTO_DECOLAGEM = 20.0   # sair da gravidade da Terra
+# --- MISSAO: CUSTOS PONTUAIS APOS A DECOLAGEM, EM % DA BATERIA ---
+# A decolagem NAO e descontada novamente aqui: o item 1.4 ja aplicou as perdas
+# e subtraiu CONSUMO_DECOLAGEM em kWh. A missao parte de autonomia_restante.
 CUSTO_MANOBRA = 5.0      # cada ajuste de rota durante o cruzeiro
 CUSTO_FRENAGEM = 5.0     # ASSUMIDO: o documento nao da o numero; usei o de uma manobra
 CUSTO_POUSO = 10.0       # retropropulsao "para nao virar um meteoro"
@@ -547,24 +548,28 @@ if not decolagem_autorizada:
 
 else:
     # --- 7.1 A IA ESCOLHE A ROTA PELA BATERIA (upgrade.md 5.2) ---
+    # A carga informada antes da decolagem continua sendo usada no planejamento da rota.
+    # A simulacao, porem, comeca EXATAMENTE com a energia que restou no item 1.4.
     energia_inicial = energia
+    energia_apos_decolagem = max(autonomia_restante, 0.0)
+    energia = energia_apos_decolagem
     if energia_inicial >= LIMIAR_ROTA_RAPIDA:
         rota = "RAPIDA"
-        texto = "[IA] Bateria em {:.1f}% (>= {:.0f}%): escolhendo a {}.".format(energia_inicial, LIMIAR_ROTA_RAPIDA, ROTAS[rota]["nome"])
+        texto = "[IA] Carga pre-decolagem em {:.1f}% (>= {:.0f}%): escolhendo a {}.".format(energia_inicial, LIMIAR_ROTA_RAPIDA, ROTAS[rota]["nome"])
     else:
         rota = "ECONOMICA"
-        texto = "[IA] Bateria em {:.1f}% (< {:.0f}%): escolhendo a {}.".format(energia_inicial, LIMIAR_ROTA_RAPIDA, ROTAS[rota]["nome"])
+        texto = "[IA] Carga pre-decolagem em {:.1f}% (< {:.0f}%): escolhendo a {}.".format(energia_inicial, LIMIAR_ROTA_RAPIDA, ROTAS[rota]["nome"])
 
-    # A DECISAO DA ROTA E A NOTA SOBRE OS DOIS MODELOS DE DECOLAGEM SO APARECEM
-    # NO MODO DETALHADO; O RESUMO FINAL JA DIZ QUAL ROTA FOI ESCOLHIDA.
+    # A ROTA USA A CARGA PRE-DECOLAGEM COMO CRITERIO DE PLANEJAMENTO.
+    # A ENERGIA DA SIMULACAO, POR SUA VEZ, VEM DIRETAMENTE DO SALDO DO ITEM 1.4.
     if MOSTRAR_VOO_NA_TELA:
         print("")
         print("=" * 78)
         print("PROJETO AURORA - SIMULACAO DE MISSAO")
         print("=" * 78)
         print(texto)
-        print("[IA] Nota: no modelo de missao a decolagem custa {:.0f}% da bateria (upgrade.md 4.1).".format(CUSTO_DECOLAGEM))
-        print("     A verificacao acima usa 300 kWh depois de 8% de perdas (~32.6%). Sao dois modelos; ver upgrade.md, secao 6.")
+        print("[ENERGIA] Carga pre-decolagem: {:.1f}%.".format(energia_inicial))
+        print("[ENERGIA] Inicio da missao: {:.1f}% apos 8% de perdas e 300 kWh da decolagem.".format(energia_apos_decolagem))
         print("")
 
     # --- 7.2 O ROTEIRO: A LISTA DE FASES ("CHECKPOINTS") DA MISSAO (upgrade.md 5.1 e 5.3) ---
@@ -592,7 +597,6 @@ else:
 
     # --- 7.3 O ESTADO DA NAVE, QUE MUDA A CADA HORA ---
     relatorio = []
-    energia_apos_decolagem = energia_inicial
     hora_missao = 0
     estado = "VERDE"
     clima = "normal"
@@ -622,7 +626,7 @@ else:
     texto = "Capitao                  : {}".format(nome_capitao)
     relatorio.append(texto)
     if MOSTRAR_VOO_NA_TELA: print(texto)
-    texto = "Verificacao de decolagem : {} (bateria em {:.1f}%)".format(classificacao, energia_inicial)
+    texto = "Verificacao de decolagem : {} (pre {:.1f}% -> pos {:.1f}%)".format(classificacao, energia_inicial, energia_apos_decolagem)
     relatorio.append(texto)
     if MOSTRAR_VOO_NA_TELA: print(texto)
     texto = "Rota escolhida pela IA   : {} ({} h de cruzeiro, {} manobra(s))".format(
@@ -665,12 +669,11 @@ else:
             texto = "[IA] Decolagem. Monitorando a estabilidade da subida. Paineis fechados (atrito da atmosfera)."
             relatorio.append(texto)
             if MOSTRAR_VOO_NA_TELA: print(texto)
-            # GASTO PONTUAL (upgrade.md 4.1). A BATERIA NUNCA FICA NEGATIVA.
-            energia = max(energia - CUSTO_DECOLAGEM, 0.0)
-            texto = "[EVENTO] {}: -{:.1f}%  -> bateria em {:.1f}%".format("Decolagem / ignicao", CUSTO_DECOLAGEM, energia)
+            # O CONSUMO DA DECOLAGEM JA FOI CONTABILIZADO NO ITEM 1.4.
+            # AQUI NAO EXISTE UM SEGUNDO DESCONTO: A MISSAO HERDA O SALDO CALCULADO.
+            texto = "[EVENTO] Decolagem ja contabilizada no item 1.4: bateria operacional em {:.1f}%.".format(energia)
             relatorio.append(texto)
             if MOSTRAR_VOO_NA_TELA: print(texto)
-            energia_apos_decolagem = energia
 
         elif local == "Espaco Profundo":
             texto = "[IA] Saindo da atmosfera. Autorizando abertura dos paineis solares. Recarga ativa."
@@ -931,7 +934,7 @@ else:
     relatorio.append(texto); print(texto)
     texto = "Capitao                  : {}".format(nome_capitao)
     relatorio.append(texto); print(texto)
-    texto = "Verificacao de decolagem : {} (bateria em {:.1f}%)".format(classificacao, energia_inicial)
+    texto = "Verificacao de decolagem : {} (pre {:.1f}% -> pos {:.1f}%)".format(classificacao, energia_inicial, energia_apos_decolagem)
     relatorio.append(texto); print(texto)
     texto = "Rota escolhida pela IA   : {} ({} h de cruzeiro, {} manobra(s))".format(
         ROTAS[rota]["nome"], horas_cruzeiro, quantidade_manobras)
@@ -967,12 +970,12 @@ else:
         numero_missao = len(arquivo.readlines())
         arquivo.close()
 
-    cabecalho = ["missao", "data_hora", "status", "energia_inicial_pct", "rota", "horas",
+    cabecalho = ["missao", "data_hora", "status", "energia_inicial_pct", "energia_pos_decolagem_pct", "rota", "horas",
                  "bateria_final_pct", "bateria_minima_pct",
                  "horas_verde", "horas_amarelo", "horas_vermelho", "avisos_risco"]
     linha = [numero_missao,
              datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-             status, energia_inicial, ROTAS[rota]["nome"], hora_missao,
+             status, energia_inicial, round(energia_apos_decolagem, 1), ROTAS[rota]["nome"], hora_missao,
              round(energia, 1), round(bateria_minima, 1),
              horas_por_estado["VERDE"], horas_por_estado["AMARELO"], horas_por_estado["VERMELHO"],
              avisos_risco]

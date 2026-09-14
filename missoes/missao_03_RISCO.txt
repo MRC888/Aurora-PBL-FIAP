@@ -1,10 +1,10 @@
-Missao Nº 03  |  12/09/2026 16:16:06
+Missao Nº 03  |  14/09/2026 11:52:43
 
 ==============================================================================
 PROJETO AURORA - SIMULACAO DE MISSAO TERRA -> MARTE
 ==============================================================================
 Capitao                  : Douglas
-Verificacao de decolagem : OTIMO (bateria em 92.0%)
+Verificacao de decolagem : OTIMO (pre 92.0% -> pos 54.6%)
 Rota escolhida pela IA   : Rota Rapida (60 h de cruzeiro, 4 manobra(s))
 Reserva critica de volta : 30% da bateria
 
@@ -19,10 +19,11 @@ SISTEMAS DA NAVE (consumo em % por hora)
 FASE: Saida da atmosfera e orbita terrestre (2 h)
 ------------------------------------------------------------------------------
 [IA] Decolagem. Monitorando a estabilidade da subida. Paineis fechados (atrito da atmosfera).
-[EVENTO] Decolagem / ignicao: -20.0%  -> bateria em 72.0%
+[EVENTO] Decolagem ja contabilizada no item 1.4: bateria operacional em 54.6%.
 HORA | FASE            | PAINEIS  | ESTADO   |  CONS | RECAR | SALDO | BATERIA | MARGEM
-   1 | Atmosfera       | fechado  | VERDE    |  1.30 |  0.00 | -1.30 |   70.7% |   72.0
-   2 | Atmosfera       | fechado  | VERDE    |  1.30 |  0.00 | -1.30 |   69.4% |   70.7
+[IA] Estado VERDE -> AMARELO: MODO DE OTIMIZACAO: prioridade 3 desligada, comunicacao economica, telemetria a cada 2 h.
+   1 | Atmosfera       | fechado  | AMARELO  |  0.90 |  0.00 | -0.90 |   53.7% |   54.6
+   2 | Atmosfera       | fechado  | AMARELO  |  0.90 |  0.00 | -0.90 |   52.8% |   53.7
 
 ------------------------------------------------------------------------------
 FASE: Cruzeiro interplanetario (60 h)
@@ -30,141 +31,141 @@ FASE: Cruzeiro interplanetario (60 h)
 [IA] Saindo da atmosfera. Autorizando abertura dos paineis solares. Recarga ativa.
 [IA] Plano de voo: 4 manobra(s) de correcao nas horas [12, 24, 36, 48] do cruzeiro.
 HORA | FASE            | PAINEIS  | ESTADO   |  CONS | RECAR | SALDO | BATERIA | MARGEM
-[IA] Estado VERDE -> AMARELO: MODO DE OTIMIZACAO: prioridade 3 desligada, comunicacao economica, telemetria a cada 2 h.
-   3 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   69.3% |   69.4
-   4 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   69.2% |   63.3
-   5 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   69.1% |   63.2
-   6 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   69.0% |   63.1
-   7 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.9% |   63.0
-   8 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.8% |   62.9
-   9 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.7% |   62.8
-  10 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.6% |   62.7
-  11 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.5% |   62.6
-  12 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.4% |   62.5
-  13 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   68.3% |   62.4
-[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 63.3%
-  14 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   63.2% |   30.0
-  15 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   63.1% |   32.2
-  16 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   63.0% |   34.0
-  17 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.9% |   35.6
-  18 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.8% |   36.9
-  19 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.7% |   38.1
-  20 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.6% |   39.1
-  21 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.5% |   39.9
-  22 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.4% |   40.7
-  23 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.3% |   41.4
-  24 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.2% |   42.0
-  25 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   62.1% |   42.6
-[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 57.1%
-[IA] Margem de retorno ameacada: no ritmo atual a volta custaria 32.1%, sobrariam 25.0% (minimo 30%). Iniciando desligamento escalonado.
+   3 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.7% |   52.8
+   4 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.6% |   46.7
+   5 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.5% |   46.6
+   6 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.4% |   46.5
+   7 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.3% |   46.4
+   8 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.2% |   46.3
+   9 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.1% |   46.2
+  10 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   52.0% |   46.1
+  11 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   51.9% |   46.0
+  12 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   51.8% |   45.9
+  13 | Espaco Profundo | total    | AMARELO  |  0.90 |  0.80 | -0.10 |   51.7% |   45.8
+[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 46.7%
+[IA] Margem de retorno ameacada: no ritmo atual a volta custaria 33.3%, sobrariam 13.5% (minimo 30%). Iniciando desligamento escalonado.
 [IA] Estado AMARELO -> VERMELHO: MODO DE SOBREVIVENCIA: prioridades 2 e 3 desligadas, so o essencial, telemetria a cada 4 h.
 [IA] *** MISSAO EM RISCO: mesmo so com o essencial, a reserva de retorno nao esta garantida. ***
-  26 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   25.0
-  27 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   26.4
-  28 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   27.6
-  29 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   28.7
-  30 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   29.8
-  31 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   57.1% |   30.7
+  14 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   13.5
+  15 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   16.2
+  16 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   18.6
+  17 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   20.6
+  18 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   22.3
+  19 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   23.9
+  20 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   25.2
+  21 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   26.4
+  22 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   27.5
+  23 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   28.4
+  24 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   29.3
+  25 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   46.7% |   30.1
+[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 41.7%
+  26 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   12.8
+  27 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   14.0
+  28 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   15.1
+  29 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   16.1
+  30 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   17.1
+  31 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   41.7% |   18.0
 [IA] Tempestade solar detectada! Recolhendo os paineis e entrando em MODO DE PROTECAO.
-  32 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   56.3% |   31.7
-  33 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   55.5% |   30.1
-  34 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   54.7% |   28.6
-  35 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   53.9% |   27.1
-  36 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   53.1% |   25.7
-  37 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   52.3% |   24.3
+  32 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   40.9% |   18.8
+  33 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   40.1% |   17.1
+  34 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   39.3% |   15.6
+  35 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   38.5% |   14.0
+  36 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   37.7% |   12.5
+  37 | Espaco Profundo | fechado  | VERMELHO |  0.80 |  0.00 | -0.80 |   36.9% |   11.1
 [IA] Condicoes normalizadas. Retomando a operacao.
-[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 47.3%
-  38 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |    9.4
-  39 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   10.5
-  40 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   11.5
-  41 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   12.4
-  42 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   13.3
-  43 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   14.2
-  44 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   15.0
-  45 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   15.7
-  46 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   16.5
-  47 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   17.2
-  48 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   17.8
-  49 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   47.3% |   18.5
-[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 42.3%
-  50 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |    7.7
-  51 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |    8.4
-  52 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |    9.1
-  53 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |    9.8
-  54 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   10.4
-  55 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   11.0
-  56 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   11.6
-  57 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   12.2
-  58 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   12.7
-  59 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   13.3
-  60 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   13.8
-  61 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   14.3
-  62 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   42.3% |   14.7
+[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 31.9%
+  38 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |   -3.9
+  39 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |   -2.9
+  40 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |   -2.0
+  41 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |   -1.1
+  42 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |   -0.2
+  43 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    0.6
+  44 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    1.4
+  45 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    2.1
+  46 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    2.8
+  47 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    3.4
+  48 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    4.1
+  49 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   31.9% |    4.7
+[EVENTO] Manobra de correcao de rota: -5.0%  -> bateria em 26.9%
+  50 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -6.1
+  51 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -5.4
+  52 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -4.8
+  53 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -4.1
+  54 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -3.5
+  55 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -2.9
+  56 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -2.4
+  57 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -1.8
+  58 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -1.3
+  59 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -0.8
+  60 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |   -0.3
+  61 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |    0.1
+  62 | Espaco Profundo | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   26.9% |    0.6
 
 ------------------------------------------------------------------------------
 FASE: Aproximacao e captura orbital (10 h)
 ------------------------------------------------------------------------------
 [IA] Iniciando manobra de frenagem para captura orbital.
-[EVENTO] Frenagem orbital: -5.0%  -> bateria em 37.3%
+[IA] AVISO: apos a frenagem a bateria fica abaixo da reserva de retorno (30%). MISSAO EM RISCO.
+[EVENTO] Frenagem orbital: -5.0%  -> bateria em 21.9%
 [IA] Em orbita. A nave passa por tras de Marte hora sim, hora nao: eclipse corta a recarga.
 HORA | FASE            | PAINEIS  | ESTADO   |  CONS | RECAR | SALDO | BATERIA | MARGEM
-  63 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   37.3% |    5.2
-  64 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   36.5% |    5.7
-  65 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   36.5% |    4.7
-  66 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   35.7% |    5.2
-  67 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   35.7% |    4.1
-  68 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   34.9% |    4.6
-  69 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   34.9% |    3.5
-  70 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   34.1% |    4.0
-  71 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   34.1% |    3.0
-  72 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   33.3% |    3.4
+  63 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   21.9% |   -9.0
+  64 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   21.1% |   -8.5
+  65 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   21.1% |   -9.5
+  66 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   20.3% |   -9.1
+  67 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   20.3% |  -10.1
+  68 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   19.5% |   -9.7
+  69 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   19.5% |  -10.7
+  70 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   18.7% |  -10.3
+  71 | Orbita de Marte | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   18.7% |  -11.3
+  72 | Orbita de Marte | eclipse  | VERMELHO |  0.80 |  0.00 | -0.80 |   17.9% |  -10.9
 
 ------------------------------------------------------------------------------
 FASE: Pouso e exploracao (24 h)
 ------------------------------------------------------------------------------
 [IA] Iniciando descida com retropropulsao.
 [IA] AVISO: apos o pouso a bateria fica abaixo da reserva de retorno (30%). MISSAO EM RISCO.
-[EVENTO] Pouso / retropropulsao: -10.0%  -> bateria em 23.3%
+[EVENTO] Pouso / retropropulsao: -10.0%  -> bateria em 7.9%
 [IA] Pouso concluido. Monitorando acumulo de poeira nos paineis.
 HORA | FASE            | PAINEIS  | ESTADO   |  CONS | RECAR | SALDO | BATERIA | MARGEM
-  73 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -16.2
-  74 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -15.7
-  75 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -15.1
-  76 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -14.6
-  77 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -14.1
-  78 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -13.6
-  79 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   23.3% |  -13.1
+  73 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -30.5
+  74 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -30.0
+  75 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -29.5
+  76 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -29.0
+  77 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -28.5
+  78 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -28.0
+  79 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    7.9% |  -27.5
 [IA] Tempestade de poeira! Recarga solar caindo. Desligando tudo que nao e essencial para sobreviver.
-  80 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   22.7% |  -12.6
-  81 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   22.1% |  -13.2
-  82 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   21.5% |  -13.8
-  83 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   20.9% |  -14.4
-  84 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   20.3% |  -15.0
-  85 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   19.7% |  -15.6
-  86 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   19.1% |  -16.2
-  87 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   18.5% |  -16.8
-  88 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   17.9% |  -17.4
-  89 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   17.3% |  -18.0
-  90 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   16.7% |  -18.6
-  91 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |   16.1% |  -19.2
+  80 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    7.3% |  -27.0
+  81 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    6.7% |  -27.7
+  82 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    6.1% |  -28.3
+  83 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    5.5% |  -28.9
+  84 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    4.9% |  -29.5
+  85 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    4.3% |  -30.1
+  86 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    3.7% |  -30.7
+  87 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    3.1% |  -31.3
+  88 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    2.5% |  -31.9
+  89 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    1.9% |  -32.6
+  90 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    1.3% |  -33.2
+  91 | Superficie      | parcial  | VERMELHO |  0.80 |  0.20 | -0.60 |    0.7% |  -33.8
 [IA] Condicoes normalizadas. Retomando a operacao.
-  92 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   16.1% |  -19.8
-  93 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   16.1% |  -19.4
-  94 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   16.1% |  -19.0
-  95 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   16.1% |  -18.7
-  96 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |   16.1% |  -18.3
+  92 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    0.7% |  -34.4
+  93 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    0.7% |  -34.0
+  94 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    0.7% |  -33.6
+  95 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    0.7% |  -33.2
+  96 | Superficie      | total    | VERMELHO |  0.80 |  0.80 | +0.00 |    0.7% |  -32.9
 
 ==============================================================================
 RESUMO DA MISSAO TERRA -> MARTE
 ==============================================================================
 Capitao                  : Douglas
-Verificacao de decolagem : OTIMO (bateria em 92.0%)
+Verificacao de decolagem : OTIMO (pre 92.0% -> pos 54.6%)
 Rota escolhida pela IA   : Rota Rapida (60 h de cruzeiro, 4 manobra(s))
 Reserva critica de volta : 30% da bateria
 Horas simuladas          : 96
-Bateria                  : inicial 92.0% | apos decolagem 72.0% | final 16.1%
-Bateria minima           : 16.1% (hora 91)
-Horas por estado         : VERDE 2 | AMARELO 23 | VERMELHO 71
-Avisos de risco          : 2
+Bateria                  : inicial 92.0% | apos decolagem 54.6% | final 0.7%
+Bateria minima           : 0.7% (hora 91)
+Horas por estado         : VERDE 0 | AMARELO 13 | VERMELHO 83
+Avisos de risco          : 3
 STATUS                   : CONCLUIDA COM RISCO
 ==============================================================================

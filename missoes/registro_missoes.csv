@@ -1,8 +1,8 @@
-﻿missao;data_hora;status;energia_inicial_pct;rota;horas;bateria_final_pct;bateria_minima_pct;horas_verde;horas_amarelo;horas_vermelho;avisos_risco
-1;2026-09-12 16:16:06;CONCLUIDA COM RISCO;80.0;Rota Economica (Hohmann);136;14.3;14.3;0;31;105;2
-2;2026-09-12 16:16:06;CONCLUIDA COM RISCO;100.0;Rota Rapida;96;20.9;20.9;13;0;83;2
-3;2026-09-12 16:16:06;CONCLUIDA COM RISCO;92.0;Rota Rapida;96;16.1;16.1;2;23;71;2
-4;2026-09-12 16:16:06;CONCLUIDA COM RISCO;85.0;Rota Economica (Hohmann);136;19.3;19.3;0;31;105;2
-5;2026-09-12 16:16:06;CONCLUIDA COM RISCO;93.0;Rota Rapida;96;17.3;17.3;3;16;77;3
-6;2026-09-12 16:16:06;CONCLUIDA COM RISCO;98.0;Rota Rapida;96;18.9;18.9;13;0;83;2
-7;2026-09-12 16:16:06;CONCLUIDA COM RISCO;90.0;Rota Rapida;96;15.1;15.1;1;18;77;3
+﻿missao;data_hora;status;energia_inicial_pct;energia_pos_decolagem_pct;rota;horas;bateria_final_pct;bateria_minima_pct;horas_verde;horas_amarelo;horas_vermelho;avisos_risco
+1;2026-09-14 11:52:43;CONCLUIDA COM RISCO;80.0;43.6;Rota Economica (Hohmann);136;1.0;1.0;0;0;136;3
+2;2026-09-14 11:52:43;CONCLUIDA COM RISCO;100.0;62.0;Rota Rapida;96;8.1;8.1;0;13;83;3
+3;2026-09-14 11:52:43;CONCLUIDA COM RISCO;92.0;54.6;Rota Rapida;96;0.7;0.7;0;13;83;3
+4;2026-09-14 11:52:43;CONCLUIDA COM RISCO;85.0;48.2;Rota Economica (Hohmann);136;5.6;5.6;0;0;136;3
+5;2026-09-14 11:52:43;CONCLUIDA COM RISCO;93.0;55.6;Rota Rapida;96;1.7;1.7;0;13;83;3
+6;2026-09-14 11:52:43;CONCLUIDA COM RISCO;98.0;60.2;Rota Rapida;96;6.3;6.3;0;13;83;3
+7;2026-09-14 11:52:43;FALHA;90.0;52.8;Rota Rapida;90;0.0;0.0;0;12;78;3
