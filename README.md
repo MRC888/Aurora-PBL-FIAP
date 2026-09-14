@@ -316,110 +316,19 @@ decolagem é o do item 1.4: 300 kWh após a aplicação das perdas energéticas.
 
 ## Prints da execução
 
-### Cenário MÉDIO — decolagem autorizada com ressalvas
+Abaixo estão duas execuções reais do `scripts/main.py`, cobrindo dois resultados distintos do sistema: um cenário **MÉDIO**, em que existem alertas e a decisão final passa pelo capitão, e um cenário **ÓTIMO**, em que nenhuma discrepância é encontrada.
 
-Entrada: `29` `-8` `1` `535` `93` `S`, e `s` na pergunta ao capitão
+### Cenário 02 — MÉDIO | decolagem autorizada com ressalvas
 
-```
-==============================================================
-TELEMETRIA INFORMADA
-==============================================================
-  Temperatura interna : 29.0 C
-  Temperatura externa : -8.0 C
-  Integridade         : 1 (Boa)
-  Pressao dos tanques : 535.0 psi
-  Energia             : 93.0 %
-  Modulos online      : SIM
+Entrada principal: temperatura interna `25 °C`, externa `30 °C`, integridade `1`, pressão `550 psi`, energia `80%` e módulos online. O sistema identifica dois alertas de margem, classifica o cenário como **MÉDIO** e transfere a decisão ao capitão, que autoriza a decolagem.
 
-==============================================================
-ANALISE ENERGETICA
-==============================================================
-  Capacidade total            : 1000.0 kWh
-  Carga atual                 : 93.0 %
-  Energia disponivel          : 930.0 kWh
-  Perdas energeticas          : 8 %
-  Energia perdida             : 74.4 kWh
-  Energia util                : 855.6 kWh
-  Consumo na decolagem        : 300.0 kWh
-  Energia apos a decolagem    : 555.6 kWh (55.6% da bateria)
-  Resultado: energia suficiente para a decolagem.
+![Execução real do cenário 02 - MÉDIO](docs/terminal_cenario_02_MEDIO.webp)
 
-==============================================================
-VERIFICACOES DE SEGURANCA
-==============================================================
-Temperatura Interna: OK
-Temperatura Externa: OK
-Integridade: Boa
-Pressão dos Tanques: OK
-Energia: OK
-Módulos: OK
+### Cenário 09 — ÓTIMO | decolagem autorizada
 
-==============================================================
-ANÁLISE ASSISTIDA POR IA - DIAGNÓSTICO DE DISCREPÂNCIAS
-==============================================================
+Entrada principal: temperatura interna `20 °C`, externa `5 °C`, integridade `1`, pressão `470 psi`, energia `98%` e módulos online. Todas as verificações são aprovadas, a análise assistida não encontra discrepâncias e o cenário é classificado como **ÓTIMO**.
 
-ALERTAS (dados válidos, mas em combinação de risco):
-  [!] Pressão de 535 psi já alta com temperatura interna de 29C. Pela lei dos
-      gases a pressão sobe com o aquecimento, podendo ultrapassar 550 psi
-      durante a subida.
-  [!] Diferencial térmico de 37C entre interna e externa. Sugere falha de
-      isolamento térmico ou sensor travado.
-  [!] Temperatura interna de 29C próxima do teto de 30C, e o calor dos motores
-      ainda vai somar durante a decolagem.
-
->> PARECER: DECOLAGEM VIÁVEL, COM RESSALVAS.
-   3 ponto(s) de atenção acima. Recomenda-se revisão humana.
-==============================================================
-
-Decolagem em espera: existem alertas aguardando a decisão do capitão.
-Deseja seguir com a decolagem? (s/n): s
-Decolagem mantida pelo capitão Aline.
-Missão em andamento.
-
-Cenario registrado como cenario_06_MEDIO.txt (classificacao: MEDIO)
-```
-
-Com a resposta `n` as duas últimas linhas viram `Decolagem vetada pelo capitão
-Aline.` e `Missão abortada.`, e o programa encerra sem simular a missão (é o
-cenário 12 da tabela abaixo).
-
-### Cenário HORRÍVEL — telemetria corrompida
-
-Entrada: `22` `25` `1` `500` `105` `S`
-
-```
-  Energia disponivel          : 1050.0 kWh   <- 1050 kWh numa bateria de 1000 kWh
-  ...
-Energia: OK                          <- a verificação tradicional aprovou
-
-DISCREPÂNCIAS CRÍTICAS (telemetria não confiável):
-  [X] Energia de 105.0% está fora do domínio físico (0 a 100%).
-      Sensor descalibrado ou erro de digitação.
-
->> PARECER: DADOS INCONSISTENTES.
-   A decolagem não pode ser avaliada com telemetria corrompida.
-
-Decolagem Não Autorizada!            <- a análise barrou
-Missão abortada.
-
-MISSAO CANCELADA: a verificacao de decolagem nao autorizou o lancamento.
-```
-
-### Entrada inválida — integridade fora do domínio
-
-```
-Digite a integridade (1 para Boa, 0 para Comprometida): 3
-Erro: '3' não é um valor válido. A integridade é binária: digite 1 (Boa) ou 0 (Comprometida).
-Digite a integridade (1 para Boa, 0 para Comprometida): ok
-Erro: 'ok' não é um valor válido. A integridade é binária: digite 1 (Boa) ou 0 (Comprometida).
-Digite a integridade (1 para Boa, 0 para Comprometida): 1
-```
-
-<!-- ESPAÇO PARA OS PRINTS EM IMAGEM
-Para adicionar capturas de tela do terminal:
-1. Salve as imagens na pasta docs/ (crie a pasta se necessário)
-2. Referencie assim:  ![Execução do cenário ótimo](docs/print-otimo.png)
--->
+![Execução real do cenário 09 - ÓTIMO](docs/terminal_cenario_09_OTIMO.webp)
 
 ---
 
