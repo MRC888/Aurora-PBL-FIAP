@@ -25,5 +25,5 @@ ANALISE ASSISTIDA POR IA
   Alertas:
     [!] Energia em 85% com temperatura externa de -9C. Baterias de lítio perdem capacidade UTILIZÁVEL no frio: a autonomia real tende a ficar abaixo da calculada.
 
-VEREDITO FINAL: DECOLAGEM AUTORIZADA
+VEREDITO FINAL: PRONTO PARA DECOLAR
 ==============================================================

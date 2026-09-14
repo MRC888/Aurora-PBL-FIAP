@@ -27,5 +27,5 @@ ANALISE ASSISTIDA POR IA
     [!] Diferencial térmico de 37C entre interna e externa. Sugere falha de isolamento térmico ou sensor travado.
     [!] Temperatura interna de 29C próxima do teto de 30C, e o calor dos motores ainda vai somar durante a decolagem.
 
-VEREDITO FINAL: DECOLAGEM AUTORIZADA
+VEREDITO FINAL: PRONTO PARA DECOLAR
 ==============================================================
