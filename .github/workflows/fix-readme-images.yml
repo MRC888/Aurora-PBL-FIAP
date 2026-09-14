@@ -1,0 +1,45 @@
+name: Fix README execution images
+
+on:
+  push:
+    branches:
+      - docs/prints-execucao-v2
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-images:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: docs/prints-execucao-v2
+          fetch-depth: 0
+
+      - name: Replace broken image references
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('docs/terminal_cenario_02_MEDIO.webp', 'docs/terminal_cenario_02_MEDIO.svg')
+          text = text.replace('docs/terminal_cenario_09_OTIMO.webp', 'docs/terminal_cenario_09_OTIMO.svg')
+          p.write_text(text, encoding='utf-8')
+          PY
+          rm -f docs/terminal_cenario_02_MEDIO.webp docs/terminal_cenario_09_OTIMO.webp
+
+      - name: Commit fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "docs: fix broken README execution images"
+            git push origin HEAD:docs/prints-execucao-v2
+          fi
