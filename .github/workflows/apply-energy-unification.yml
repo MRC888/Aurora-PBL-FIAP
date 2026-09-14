@@ -1,0 +1,41 @@
+name: Apply energy-model unification
+
+on:
+  push:
+    branches:
+      - fix/unificar-modelo-energetico
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/unificar-modelo-energetico
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply and validate energy fix
+        run: python tools/apply_energy_unification.py
+
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/main.py README.md notebook/aurora_pbl.ipynb missoes/
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "fix: unify launch and mission energy model"
+            git push origin HEAD:fix/unificar-modelo-energetico
+          fi
