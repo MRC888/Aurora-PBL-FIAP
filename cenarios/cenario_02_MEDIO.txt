@@ -26,5 +26,5 @@ ANALISE ASSISTIDA POR IA
     [!] Energia a 80.0%, no limiar dos 80% exigidos. Não sobra margem para a incerteza do próprio sensor (tipicamente +/- 2%).
     [!] Pressão de 550 psi opera na fronteira da faixa segura (450 a 550 psi).
 
-VEREDITO FINAL: DECOLAGEM AUTORIZADA
+VEREDITO FINAL: PRONTO PARA DECOLAR
 ==============================================================

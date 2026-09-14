@@ -15,8 +15,8 @@
 #   ETAPA 8  registro da missao (pasta missoes/)
 #
 # NAO HA FUNCOES. TODAS AS CONSTANTES ESTAO NO TOPO, E CADA VARIAVEL NASCE
-# NA ETAPA EM QUE E USADA PELA PRIMEIRA VEZ. O PAINEL DE VOO (painel.py)
-# EXISTE NA PASTA MAS NAO E USADO POR ESTE PROGRAMA.
+# NA ETAPA EM QUE E USADA PELA PRIMEIRA VEZ. O PROGRAMA E AUTOSSUFICIENTE:
+# ESTE SCRIPT NAO DEPENDE DE ARQUIVOS AUXILIARES PARA EXECUTAR.
 #
 # COMO USAR:  python scripts/main.py
 # =====================================================================
@@ -48,7 +48,7 @@ PRESSAO_MIN = 450.0         # psi
 PRESSAO_MAX = 550.0         # psi
 ENERGIA_MINIMA = 80.0       # % - abaixo disso a decolagem e abortada
 
-# --- LIMIARES DA ANALISE ASSISTIDA POR IA (analise_assistida_ia.md) ---
+# --- LIMIARES DA ANALISE ASSISTIDA POR IA ---
 TEMP_EXTERNA_FRIA = 0.0         # C - abaixo disso a bateria de litio perde capacidade utilizavel
 ENERGIA_CONFORTAVEL = 90.0      # % - energia abaixo disso no frio gera alerta
 PRESSAO_ALTA = 520.0            # psi - pressao acima disso com cabine quente gera alerta
@@ -72,13 +72,13 @@ CUSTO_MANOBRA = 5.0      # cada ajuste de rota durante o cruzeiro
 CUSTO_FRENAGEM = 5.0     # ASSUMIDO: o documento nao da o numero; usei o de uma manobra
 CUSTO_POUSO = 10.0       # retropropulsao "para nao virar um meteoro"
 
-# --- MISSAO: RESERVA E ESTADOS (upgrade.md 2.2 e 3.2) ---
+# --- MISSAO: RESERVA E ESTADOS ---
 RESERVA_CRITICA = 30.0   # % minima para a manobra de volta a Terra
 LIMIAR_VERDE = 70.0      # ASSUMIDO: bateria >= 70%  -> VERDE
 LIMIAR_AMARELO = 50.0    # ASSUMIDO: 50% <= bateria < 70% -> AMARELO; abaixo -> VERMELHO
 FOLGA_MARGEM = 10.0      # ASSUMIDO: o alerta de margem so desliga acima de 30 + 10, para nao piscar
 
-# QUANTAS HORAS ENTRE UMA LINHA DE TELEMETRIA E OUTRA NA TELA (upgrade.md 2.2).
+# QUANTAS HORAS ENTRE UMA LINHA DE TELEMETRIA E OUTRA NA TELA.
 # O ARQUIVO TXT GUARDA TODAS AS HORAS; SO A TELA E REDUZIDA.
 FREQUENCIA_TELEMETRIA = {"VERDE": 1, "AMARELO": 2, "VERMELHO": 4}
 
@@ -88,7 +88,7 @@ DESCRICAO_ESTADO = {
     "VERMELHO": "MODO DE SOBREVIVENCIA: prioridades 2 e 3 desligadas, so o essencial, telemetria a cada 4 h",
 }
 
-# --- MISSAO: SISTEMAS DA NAVE, CONSUMO EM % POR HORA (upgrade.md 4.2) ---
+# --- MISSAO: SISTEMAS DA NAVE, CONSUMO EM % POR HORA ---
 # UMA LISTA DE DICIONARIOS: CADA SISTEMA E UMA "FICHA" COM NOME, CONSUMO E PRIORIDADE.
 SISTEMAS = [
     {"nome": "Suporte a vida",        "consumo": 0.5, "prioridade": 1},
@@ -98,7 +98,7 @@ SISTEMAS = [
     {"nome": "Iluminacao e internos", "consumo": 0.1, "prioridade": 3},
 ]
 
-# --- MISSAO: RECARGA SOLAR, GANHO EM % POR HORA (upgrade.md 4.3) ---
+# --- MISSAO: RECARGA SOLAR, GANHO EM % POR HORA ---
 RECARGA = {
     "total":   0.8,   # espaco aberto
     "parcial": 0.2,   # sombra parcial ou poeira nos paineis
@@ -106,7 +106,7 @@ RECARGA = {
     "fechado": 0.0,   # paineis recolhidos (atmosfera ou tempestade solar)
 }
 
-# --- MISSAO: ROTAS (upgrade.md 5.2) E ROTEIRO (5.1) ---
+# --- MISSAO: ROTAS E ROTEIRO (5.1) ---
 # ASSUMIDO: as duracoes sao uma escala didatica, em "horas de simulacao".
 LIMIAR_ROTA_RAPIDA = 90.0   # bateria >= 90% -> rota rapida; abaixo -> economica
 ROTAS = {
@@ -421,8 +421,10 @@ if classificacao == "MEDIO":
 
 # VEREDITO FINAL (vale para os três cenários, sem depender de "resposta")
 if decolagem_autorizada:
+    print("VEREDITO FINAL: PRONTO PARA DECOLAR")
     print("Missão em andamento.")
 else:
+    print("VEREDITO FINAL: DECOLAGEM ABORTADA")
     print("Missão abortada.")
 
 
@@ -518,7 +520,10 @@ if not criticos and not alertas:
     relatorio_cenario.append("  Nenhuma discrepancia encontrada.")
 
 relatorio_cenario.append("")
-relatorio_cenario.append("VEREDITO FINAL: DECOLAGEM " + decolagem_texto)
+if decolagem_autorizada:
+    relatorio_cenario.append("VEREDITO FINAL: PRONTO PARA DECOLAR")
+else:
+    relatorio_cenario.append("VEREDITO FINAL: DECOLAGEM ABORTADA")
 relatorio_cenario.append("=" * 62)
 
 arquivo = open(arquivo_txt, "w", encoding="utf-8")
@@ -531,7 +536,7 @@ print("Planilha acumulada em: cenarios/registro_execucoes.csv")
 
 
 # =====================================================================
-# ETAPA 7 - SIMULACAO DA MISSAO TERRA -> MARTE (upgrade.md)
+# ETAPA 7 - SIMULACAO DA MISSAO TERRA -> MARTE
 # =====================================================================
 # SO ACONTECE SE A DECOLAGEM FOI AUTORIZADA. A IA DEIXA DE SER UM VALIDADOR
 # DE UM UNICO INPUT E PASSA A SER UM MONITOR DE MISSAO: A CADA "HORA" ELA
@@ -547,7 +552,7 @@ if not decolagem_autorizada:
     print("MISSAO CANCELADA: a verificacao de decolagem nao autorizou o lancamento.")
 
 else:
-    # --- 7.1 A IA ESCOLHE A ROTA PELA BATERIA (upgrade.md 5.2) ---
+    # --- 7.1 A IA ESCOLHE A ROTA PELA BATERIA ---
     # A carga informada antes da decolagem continua sendo usada no planejamento da rota.
     # A simulacao, porem, comeca EXATAMENTE com a energia que restou no item 1.4.
     energia_inicial = energia
@@ -572,7 +577,7 @@ else:
         print("[ENERGIA] Inicio da missao: {:.1f}% apos 8% de perdas e 300 kWh da decolagem.".format(energia_apos_decolagem))
         print("")
 
-    # --- 7.2 O ROTEIRO: A LISTA DE FASES ("CHECKPOINTS") DA MISSAO (upgrade.md 5.1 e 5.3) ---
+    # --- 7.2 O ROTEIRO: A LISTA DE FASES ("CHECKPOINTS") DA MISSAO ---
     horas_cruzeiro = ROTAS[rota]["horas_cruzeiro"]
     quantidade_manobras = ROTAS[rota]["manobras"]
 
@@ -664,7 +669,7 @@ else:
         relatorio.append(texto)
         if MOSTRAR_VOO_NA_TELA: print(texto)
 
-        # ---- CHECKPOINT (upgrade.md 5.3): O QUE A IA FAZ AO ENTRAR NA FASE ----
+        # ---- CHECKPOINT: O QUE A IA FAZ AO ENTRAR NA FASE ----
         if local == "Atmosfera":
             texto = "[IA] Decolagem. Monitorando a estabilidade da subida. Paineis fechados (atrito da atmosfera)."
             relatorio.append(texto)
@@ -723,12 +728,12 @@ else:
         relatorio.append(cabecalho_tabela)
         if MOSTRAR_VOO_NA_TELA: print(cabecalho_tabela)
 
-        # ---- O LOOP DE HORAS DESTA FASE (upgrade.md 4.4) ----
+        # ---- O LOOP DE HORAS DESTA FASE ----
         for hora_na_fase in range(1, fase["horas"] + 1):
             hora_missao = hora_missao + 1
             houve_evento = False   # SE ALGO ACONTECEU, A LINHA DESTA HORA APARECE NA TELA
 
-            # 1) CLIMA: COMECOU OU TERMINOU UMA TEMPESTADE? (upgrade.md 5.1)
+            # 1) CLIMA: COMECOU OU TERMINOU UMA TEMPESTADE?
             #    OS RISCOS SAO PROGRAMADOS (NAO ALEATORIOS) PARA A MESMA ENTRADA DAR SEMPRE O MESMO RESULTADO.
             clima_novo = "normal"
             if local == "Espaco Profundo":
@@ -754,7 +759,7 @@ else:
                 clima = clima_novo
                 houve_evento = True
 
-            # 2) MANOBRA PROGRAMADA NESTA HORA? (upgrade.md 4.1)
+            # 2) MANOBRA PROGRAMADA NESTA HORA?
             #    A MANOBRA ENTRA NA FILA DE PENDENTES. SE O CLIMA ESTA NORMAL, E EXECUTADA
             #    NA MESMA HORA. SE HA TEMPESTADE (PAINEIS RECOLHIDOS, MODO DE PROTECAO), A IA
             #    ADIA: A MANOBRA FICA NA FILA E SAI NA PRIMEIRA HORA COM CLIMA NORMAL, UMA
@@ -779,7 +784,7 @@ else:
                 if MOSTRAR_VOO_NA_TELA: print(texto)
                 houve_evento = True
 
-            # 3) MARGEM DE RETORNO (upgrade.md 3.2)
+            # 3) MARGEM DE RETORNO
             #    Margem = Energia Atual - (Consumo Medio x Tempo de Retorno)
             #    CONSUMO MEDIO = QUANTO A BATERIA CAIU POR HORA DESDE QUE OS PAINEIS ABRIRAM
             #    (JA DESCONTANDO A RECARGA). TEMPO DE RETORNO = UM CRUZEIRO INTEIRO DE VOLTA.
@@ -810,7 +815,7 @@ else:
                     relatorio.append(texto)
                     if MOSTRAR_VOO_NA_TELA: print(texto)
 
-            # 4) ESTADO DA NAVE (upgrade.md 2.2)
+            # 4) ESTADO DA NAVE
             if clima != "normal":
                 estado_novo = "VERMELHO"   # MODO DE PROTECAO (tempestade solar) OU SOBREVIVENCIA (poeira)
             else:
@@ -821,7 +826,7 @@ else:
                 else:
                     estado_novo = "VERMELHO"
 
-                # upgrade.md 3.2: SE A MARGEM DE RETORNO ESTA AMEACADA, DESCE UM DEGRAU
+                # SE A MARGEM DE RETORNO ESTA AMEACADA, DESCE UM DEGRAU
                 # (VERDE -> AMARELO -> VERMELHO; VERMELHO FICA VERMELHO).
                 if alerta_margem:
                     if estado_novo == "VERDE":
@@ -846,7 +851,7 @@ else:
             if em_risco and (estado != "VERMELHO" or not alerta_margem):
                 em_risco = False
 
-            # 5) QUAIS SISTEMAS FICAM LIGADOS NESTE ESTADO, E QUANTO CONSOMEM (upgrade.md 2.1 e 2.2)
+            # 5) QUAIS SISTEMAS FICAM LIGADOS NESTE ESTADO, E QUANTO CONSOMEM
             #      VERDE    -> tudo ligado
             #      AMARELO  -> prioridade 3 desligada, comunicacao em modo economico
             #      VERMELHO -> so prioridade 1 (o essencial)
@@ -870,7 +875,7 @@ else:
                 consumo = consumo + consumo_sistema
                 ligados.append(sistema["nome"])
 
-            # 6) QUANTO SOL CHEGA NOS PAINEIS NESTA HORA (upgrade.md 4.3 e 5.1)
+            # 6) QUANTO SOL CHEGA NOS PAINEIS NESTA HORA
             if fase["paineis"] == "fechado":
                 exposicao = "fechado"
             elif clima == "tempestade_solar":
@@ -885,7 +890,7 @@ else:
             else:
                 exposicao = fase["paineis"]
 
-            # 7) O BALANCO DA HORA (upgrade.md 4.4): Saldo = Recarga - Soma dos Sistemas Ativos
+            # 7) O BALANCO DA HORA: Saldo = Recarga - Soma dos Sistemas Ativos
             recarga = RECARGA[exposicao]
             saldo = recarga - consumo
             energia = energia + saldo

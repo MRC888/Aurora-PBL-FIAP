@@ -87,6 +87,8 @@ sistema que decide sobre segurança, reprodutibilidade é requisito.
 | **MÉDIO** | Em espera: consumindo margem de segurança — a decisão passa para o capitão |
 | **HORRÍVEL** | Abortada por falha de segurança ou telemetria não confiável |
 
+Ao final, além da classificação, o programa imprime literalmente um dos dois vereditos pedidos no enunciado: `VEREDITO FINAL: PRONTO PARA DECOLAR` ou `VEREDITO FINAL: DECOLAGEM ABORTADA`.
+
 A faixa intermediária existe por decisão de projeto: um veredito binário empurra a
 decisão inteiramente para o algoritmo, enquanto um resultado que diz "liberado, mas
 observe estes três pontos" devolve a decisão a quem tem responsabilidade sobre ela.

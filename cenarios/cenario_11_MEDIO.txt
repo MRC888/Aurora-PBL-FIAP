@@ -25,5 +25,5 @@ ANALISE ASSISTIDA POR IA
   Alertas:
     [!] Pressão de 450 psi opera na fronteira da faixa segura (450 a 550 psi).
 
-VEREDITO FINAL: DECOLAGEM AUTORIZADA
+VEREDITO FINAL: PRONTO PARA DECOLAR
 ==============================================================
