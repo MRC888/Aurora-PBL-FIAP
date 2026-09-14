@@ -259,11 +259,17 @@ anteriores.
 ### 4. A missão Terra → Marte
 
 Não há comando separado: a missão é a continuação do `main.py` quando a
-decolagem é autorizada. A IA escolhe a rota pela carga da bateria (90 % ou mais
-vai pela rota rápida; abaixo disso, pela econômica) e simula a missão hora a
+decolagem é autorizada. A IA escolhe a rota pela **carga pré-decolagem** (90 % ou
+mais vai pela rota rápida; abaixo disso, pela econômica) e simula a missão hora a
 hora, em quatro fases: saída da atmosfera, cruzeiro interplanetário, captura
 orbital em Marte e pouso. Na tela aparece só o **resumo da missão** no fim
 (capitão, verificação, rota, horas, bateria, horas em cada estado e status).
+
+**Modelo energético unificado.** A simulação não reinicia a bateria e não cobra a
+decolagem uma segunda vez. Ela começa exatamente em `autonomia_restante`, valor
+calculado no item 1.4 depois das perdas de 8 % e do consumo de 300 kWh. Assim,
+por exemplo, uma carga de 100 % deixa 62 % da capacidade para o início da missão,
+e esse mesmo saldo segue para a simulação Terra → Marte.
 
 A cada hora a IA calcula o saldo de energia (recarga solar menos o consumo dos
 sistemas ligados), decide o estado da nave e age:
@@ -291,10 +297,11 @@ início do `main.py`. Nesse modo a tela mostra menos linhas que o arquivo: em
 Amarelo a telemetria sai a cada 2 h, em Vermelho a cada 4 h. O arquivo guarda
 tudo nos dois casos.
 
-Os números do modelo (custos pontuais de 20, 5 e 10 %, consumo dos cinco
-sistemas, recarga solar de 0,8 %/h, reserva de 30 % para a volta, duração das
-fases e tempestades) são as constantes no topo do `main.py`, cada uma comentada
-com a origem ou com a marca `ASSUMIDO` quando a especificação não dava o número.
+Os números adicionais da extensão (custos pós-decolagem de manobra,
+frenagem e pouso, consumo dos cinco sistemas, recarga solar, reserva de retorno,
+duração das fases e tempestades) ficam nas constantes do `main.py`, identificados
+como `ASSUMIDO` quando são escolhas didáticas do grupo. O único custo de
+decolagem é o do item 1.4: 300 kWh após a aplicação das perdas energéticas.
 
 ### Problemas comuns
 
@@ -452,11 +459,11 @@ classificação MÉDIO, e a capitã respondeu `n`. A decolagem foi abortada e a
 missão não aconteceu, com a mesma telemetria que em outro dia poderia ter sido
 liberada.
 
-As 7 decolagens autorizadas geraram as 7 missões da pasta `missoes/`, todas
-concluídas com risco: o pouso em Marte custa 10 % e deixa a bateria abaixo da
-reserva de retorno em todos os casos, porque a recarga solar máxima (0,8 %/h)
-apenas empata com o consumo do essencial. É uma consequência dos números do
-modelo, registrada como decisão de projeto, e não um defeito do código.
+As 7 decolagens autorizadas geraram as 7 missões da pasta `missoes/`.
+Os registros foram recalculados com o **mesmo saldo energético do item 1.4**:
+a missão começa na energia pós-decolagem já descontadas as perdas e os 300 kWh,
+sem aplicar um segundo custo de lançamento. Os resultados atualizados ficam em
+`missoes/registro_missoes.csv` e nas respectivas caixas-pretas em TXT.
 
 ---
 
