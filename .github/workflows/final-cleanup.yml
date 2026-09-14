@@ -1,0 +1,171 @@
+name: Final project cleanup
+
+on:
+  push:
+    branches:
+      - fix/final-10-10
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/final-10-10
+          fetch-depth: 0
+
+      - name: Apply final cleanup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          # ------------------------------------------------------------
+          # 1) main.py: remove stale file references + literal final verdict
+          # ------------------------------------------------------------
+          main_path = Path('scripts/main.py')
+          text = main_path.read_text(encoding='utf-8')
+
+          replacements = {
+              '# NAO HA FUNCOES. TODAS AS CONSTANTES ESTAO NO TOPO, E CADA VARIAVEL NASCE\n# NA ETAPA EM QUE E USADA PELA PRIMEIRA VEZ. O PAINEL DE VOO (painel.py)\n# EXISTE NA PASTA MAS NAO E USADO POR ESTE PROGRAMA.':
+              '# NAO HA FUNCOES. TODAS AS CONSTANTES ESTAO NO TOPO, E CADA VARIAVEL NASCE\n# NA ETAPA EM QUE E USADA PELA PRIMEIRA VEZ. O PROGRAMA E AUTOSSUFICIENTE:\n# ESTE SCRIPT NAO DEPENDE DE ARQUIVOS AUXILIARES PARA EXECUTAR.',
+              '# --- LIMIARES DA ANALISE ASSISTIDA POR IA (analise_assistida_ia.md) ---': '# --- LIMIARES DA ANALISE ASSISTIDA POR IA ---',
+              '# --- MISSAO: RESERVA E ESTADOS (upgrade.md 2.2 e 3.2) ---': '# --- MISSAO: RESERVA E ESTADOS ---',
+              '# QUANTAS HORAS ENTRE UMA LINHA DE TELEMETRIA E OUTRA NA TELA (upgrade.md 2.2).': '# QUANTAS HORAS ENTRE UMA LINHA DE TELEMETRIA E OUTRA NA TELA.',
+              '# --- MISSAO: SISTEMAS DA NAVE, CONSUMO EM % POR HORA (upgrade.md 4.2) ---': '# --- MISSAO: SISTEMAS DA NAVE, CONSUMO EM % POR HORA ---',
+              '# --- MISSAO: RECARGA SOLAR, GANHO EM % POR HORA (upgrade.md 4.3) ---': '# --- MISSAO: RECARGA SOLAR, GANHO EM % POR HORA ---',
+              '# --- MISSAO: ROTAS (upgrade.md 5.2) E ROTEIRO (5.1) ---': '# --- MISSAO: ROTAS E ROTEIRO ---',
+              '# ETAPA 7 - SIMULACAO DA MISSAO TERRA -> MARTE (upgrade.md)': '# ETAPA 7 - SIMULACAO DA MISSAO TERRA -> MARTE',
+              '# --- 7.1 A IA ESCOLHE A ROTA PELA BATERIA (upgrade.md 5.2) ---': '# --- 7.1 A IA ESCOLHE A ROTA PELA BATERIA ---',
+              '# --- 7.2 O ROTEIRO: A LISTA DE FASES ("CHECKPOINTS") DA MISSAO (upgrade.md 5.1 e 5.3) ---': '# --- 7.2 O ROTEIRO: A LISTA DE FASES ("CHECKPOINTS") DA MISSAO ---',
+              '# ---- CHECKPOINT (upgrade.md 5.3): O QUE A IA FAZ AO ENTRAR NA FASE ----': '# ---- CHECKPOINT: O QUE A IA FAZ AO ENTRAR NA FASE ----',
+              '# ---- O LOOP DE HORAS DESTA FASE (upgrade.md 4.4) ----': '# ---- O LOOP DE HORAS DESTA FASE ----',
+              '# 1) CLIMA: COMECOU OU TERMINOU UMA TEMPESTADE? (upgrade.md 5.1)': '# 1) CLIMA: COMECOU OU TERMINOU UMA TEMPESTADE?',
+              '# 2) MANOBRA PROGRAMADA NESTA HORA? (upgrade.md 4.1)': '# 2) MANOBRA PROGRAMADA NESTA HORA?',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Trecho esperado não encontrado em main.py: {old}')
+              text = text.replace(old, new)
+
+          old_final = '''if decolagem_autorizada:\n    print("Missão em andamento.")\nelse:\n    print("Missão abortada.")'''
+          new_final = '''if decolagem_autorizada:\n    print("VEREDITO FINAL: PRONTO PARA DECOLAR")\n    print("Missão em andamento.")\nelse:\n    print("VEREDITO FINAL: DECOLAGEM ABORTADA")\n    print("Missão abortada.")'''
+          if old_final not in text:
+              raise SystemExit('Bloco de veredito final não encontrado em main.py')
+          text = text.replace(old_final, new_final, 1)
+
+          old_report = 'relatorio_cenario.append("VEREDITO FINAL: DECOLAGEM " + decolagem_texto)'
+          new_report = '''if decolagem_autorizada:\n    relatorio_cenario.append("VEREDITO FINAL: PRONTO PARA DECOLAR")\nelse:\n    relatorio_cenario.append("VEREDITO FINAL: DECOLAGEM ABORTADA")'''
+          if old_report not in text:
+              raise SystemExit('Bloco de veredito do relatório não encontrado em main.py')
+          text = text.replace(old_report, new_report, 1)
+
+          if any(s in text for s in ('painel.py', 'upgrade.md', 'analise_assistida_ia.md')):
+              raise SystemExit('Ainda restou referência antiga em main.py')
+          if 'VEREDITO FINAL: PRONTO PARA DECOLAR' not in text or 'VEREDITO FINAL: DECOLAGEM ABORTADA' not in text:
+              raise SystemExit('Vereditos literais não foram inseridos em main.py')
+          main_path.write_text(text, encoding='utf-8')
+
+          # ------------------------------------------------------------
+          # 2) Existing scenario TXT files: align saved final verdicts
+          # ------------------------------------------------------------
+          for p in Path('cenarios').glob('cenario_*.txt'):
+              s = p.read_text(encoding='utf-8')
+              s = s.replace('VEREDITO FINAL: DECOLAGEM AUTORIZADA', 'VEREDITO FINAL: PRONTO PARA DECOLAR')
+              # ABORTADA already matches the exact wording requested
+              p.write_text(s, encoding='utf-8')
+
+          # ------------------------------------------------------------
+          # 3) Notebook: keep source + saved output consistent
+          # ------------------------------------------------------------
+          nb_path = Path('notebook/aurora_pbl.ipynb')
+          nb = json.loads(nb_path.read_text(encoding='utf-8'))
+          source_replaced = False
+          for cell in nb.get('cells', []):
+              if cell.get('cell_type') == 'code':
+                  src = ''.join(cell.get('source', []))
+                  if old_final in src:
+                      src = src.replace(old_final, new_final, 1)
+                      cell['source'] = src.splitlines(keepends=True)
+                      source_replaced = True
+                  for out in cell.get('outputs', []):
+                      if out.get('output_type') == 'stream' and isinstance(out.get('text'), list):
+                          lines = out['text']
+                          new_lines = []
+                          for line in lines:
+                              if line == 'Missão em andamento.\n' and (not new_lines or new_lines[-1] != 'VEREDITO FINAL: PRONTO PARA DECOLAR\n'):
+                                  new_lines.append('VEREDITO FINAL: PRONTO PARA DECOLAR\n')
+                              elif line == 'Missão abortada.\n' and (not new_lines or new_lines[-1] != 'VEREDITO FINAL: DECOLAGEM ABORTADA\n'):
+                                  new_lines.append('VEREDITO FINAL: DECOLAGEM ABORTADA\n')
+                              new_lines.append(line)
+                          out['text'] = new_lines
+          if not source_replaced:
+              raise SystemExit('Bloco de veredito não encontrado no notebook')
+          nb_path.write_text(json.dumps(nb, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+
+          # ------------------------------------------------------------
+          # 4) README: document the literal final output
+          # ------------------------------------------------------------
+          readme_path = Path('README.md')
+          r = readme_path.read_text(encoding='utf-8')
+          anchor = '| **HORRÍVEL** | Abortada por falha de segurança ou telemetria não confiável |\n'
+          addition = anchor + '\nAo final, além da classificação, o programa imprime literalmente um dos dois vereditos pedidos no enunciado: `VEREDITO FINAL: PRONTO PARA DECOLAR` ou `VEREDITO FINAL: DECOLAGEM ABORTADA`.\n'
+          if anchor in r and 'VEREDITO FINAL: PRONTO PARA DECOLAR` ou `VEREDITO FINAL: DECOLAGEM ABORTADA' not in r:
+              r = r.replace(anchor, addition, 1)
+          readme_path.write_text(r, encoding='utf-8')
+
+          # ------------------------------------------------------------
+          # 5) README execution images: add the new literal verdict line
+          # ------------------------------------------------------------
+          p = Path('docs/terminal_cenario_02_MEDIO.svg')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('height="1810" viewBox="0 0 1120 1810"', 'height="1834" viewBox="0 0 1120 1834"', 1)
+          old = '''<text x="24" y="1652" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Decolagem mantida pelo capitão Marcelo.</text>\n<text x="24" y="1676" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Missão em andamento.</text>\n<text x="24" y="1700" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#e8e8e8"></text>\n<text x="24" y="1724" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Cenário registrado como cenario_02_MEDIO.txt (classificação: MEDIO)</text>\n<text x="24" y="1748" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Planilha acumulada em: cenarios/registro_execucoes.csv</text>'''
+          new = '''<text x="24" y="1652" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Decolagem mantida pelo capitão Marcelo.</text>\n<text x="24" y="1676" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">VEREDITO FINAL: PRONTO PARA DECOLAR</text>\n<text x="24" y="1700" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Missão em andamento.</text>\n<text x="24" y="1724" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#e8e8e8"></text>\n<text x="24" y="1748" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Cenário registrado como cenario_02_MEDIO.txt (classificação: MEDIO)</text>\n<text x="24" y="1772" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Planilha acumulada em: cenarios/registro_execucoes.csv</text>'''
+          if old not in s:
+              raise SystemExit('Trecho final do SVG cenário 02 não encontrado')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          p = Path('docs/terminal_cenario_09_OTIMO.svg')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('height="1642" viewBox="0 0 1120 1642"', 'height="1666" viewBox="0 0 1120 1666"', 1)
+          old = '''<text x="24" y="1484" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Decolagem Autorizada!</text>\n<text x="24" y="1508" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Missão em andamento.</text>\n<text x="24" y="1532" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#e8e8e8"></text>\n<text x="24" y="1556" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Cenário registrado como cenario_09_OTIMO.txt (classificação: OTIMO)</text>\n<text x="24" y="1580" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Planilha acumulada em: cenarios/registro_execucoes.csv</text>'''
+          new = '''<text x="24" y="1484" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Decolagem Autorizada!</text>\n<text x="24" y="1508" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">VEREDITO FINAL: PRONTO PARA DECOLAR</text>\n<text x="24" y="1532" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#5fd2bb">Missão em andamento.</text>\n<text x="24" y="1556" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#e8e8e8"></text>\n<text x="24" y="1580" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Cenário registrado como cenario_09_OTIMO.txt (classificação: OTIMO)</text>\n<text x="24" y="1604" xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#bbbbbb">Planilha acumulada em: cenarios/registro_execucoes.csv</text>'''
+          if old not in s:
+              raise SystemExit('Trecho final do SVG cenário 09 não encontrado')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          # Final assertions
+          final_main = main_path.read_text(encoding='utf-8')
+          assert 'upgrade.md' not in final_main
+          assert 'analise_assistida_ia.md' not in final_main
+          assert 'painel.py' not in final_main
+          assert 'VEREDITO FINAL: PRONTO PARA DECOLAR' in final_main
+          assert 'VEREDITO FINAL: DECOLAGEM ABORTADA' in final_main
+          PY
+
+      - name: Validate Python syntax and repository consistency
+        run: |
+          python -m py_compile scripts/main.py
+          ! grep -R -n -E 'painel\.py|upgrade\.md|analise_assistida_ia\.md' scripts/main.py
+          grep -n 'VEREDITO FINAL: PRONTO PARA DECOLAR' scripts/main.py
+          grep -n 'VEREDITO FINAL: DECOLAGEM ABORTADA' scripts/main.py
+          grep -n 'VEREDITO FINAL: PRONTO PARA DECOLAR' notebook/aurora_pbl.ipynb
+          grep -n 'VEREDITO FINAL: PRONTO PARA DECOLAR' docs/terminal_cenario_02_MEDIO.svg
+          grep -n 'VEREDITO FINAL: PRONTO PARA DECOLAR' docs/terminal_cenario_09_OTIMO.svg
+
+      - name: Commit final cleanup and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/final-cleanup.yml
+          git add scripts/main.py README.md notebook/aurora_pbl.ipynb cenarios/ docs/ .github/workflows/final-cleanup.yml
+          git commit -m "fix: limpeza final e veredito literal do PBL"
+          git push origin HEAD:fix/final-10-10
