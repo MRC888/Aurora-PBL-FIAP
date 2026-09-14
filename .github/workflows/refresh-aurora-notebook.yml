@@ -1,0 +1,47 @@
+name: Refresh Aurora notebook outputs
+
+on:
+  push:
+    branches:
+      - fix/unificar-modelo-energetico
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-notebook:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/unificar-modelo-energetico
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install notebook dependencies
+        run: python -m pip install jupyter matplotlib
+
+      - name: Execute notebook
+        run: |
+          python -m jupyter nbconvert --to notebook --execute notebook/aurora_pbl.ipynb \
+            --output aurora_pbl.ipynb --output-dir notebook \
+            --ExecutePreprocessor.timeout=180
+
+      - name: Commit refreshed outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add notebook/aurora_pbl.ipynb
+          if git diff --cached --quiet; then
+            echo "No notebook changes to commit."
+          else
+            git commit -m "docs: refresh notebook outputs for unified energy model"
+            git push origin HEAD:fix/unificar-modelo-energetico
+          fi
