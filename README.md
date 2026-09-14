@@ -322,13 +322,13 @@ Abaixo estão duas execuções reais do `scripts/main.py`, cobrindo dois resulta
 
 Entrada principal: temperatura interna `25 °C`, externa `30 °C`, integridade `1`, pressão `550 psi`, energia `80%` e módulos online. O sistema identifica dois alertas de margem, classifica o cenário como **MÉDIO** e transfere a decisão ao capitão, que autoriza a decolagem.
 
-![Execução real do cenário 02 - MÉDIO](docs/terminal_cenario_02_MEDIO.webp)
+![Execução real do cenário 02 - MÉDIO](docs/terminal_cenario_02_MEDIO.svg)
 
 ### Cenário 09 — ÓTIMO | decolagem autorizada
 
 Entrada principal: temperatura interna `20 °C`, externa `5 °C`, integridade `1`, pressão `470 psi`, energia `98%` e módulos online. Todas as verificações são aprovadas, a análise assistida não encontra discrepâncias e o cenário é classificado como **ÓTIMO**.
 
-![Execução real do cenário 09 - ÓTIMO](docs/terminal_cenario_09_OTIMO.webp)
+![Execução real do cenário 09 - ÓTIMO](docs/terminal_cenario_09_OTIMO.svg)
 
 ---
 
