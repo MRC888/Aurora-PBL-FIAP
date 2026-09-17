@@ -10,7 +10,8 @@ camada de análise que cruza os parâmetros em busca de discrepâncias.
 
 ## Sobre o projeto
 
-O sistema recebe seis parâmetros de telemetria e emite um veredito. A parte
+O sistema recebe cinco dados de telemetria, calcula a integridade operacional
+e emite um veredito. A parte
 interessante não é a verificação em si — é o que ela **não** consegue ver sozinha.
 
 Durante os testes, informamos energia de 105%. As seis verificações de segurança
@@ -20,11 +21,28 @@ nave com um sensor claramente corrompido.
 Foi isso que motivou a terceira camada do projeto. Cada regra estava correta
 isoladamente; o conjunto delas, ainda assim, falhava.
 
-O mesmo tipo de falha aparecia na integridade estrutural, que aceitava 3 como se
-fosse 1. Esse caso foi resolvido de outro jeito: hoje o programa só aceita `0` ou
-`1` na digitação e repete a pergunta até receber um valor válido. Dado que não
-pode existir é barrado na entrada; dado que existe mas não combina com os outros
-é trabalho da análise.
+A integridade é avaliada automaticamente a partir das temperaturas, da pressão e
+do estado dos módulos. O operador informa as leituras; o sistema calcula o
+indicador `integridade` e apresenta os motivos do diagnóstico.
+
+### Integridade calculada pelo sistema
+
+A integridade operacional estimada vale `1` (preservada no modelo) somente quando:
+
+- a temperatura interna está entre 15 e 30 °C;
+- a temperatura externa está entre -10 e 45 °C;
+- a pressão dos tanques está entre 450 e 550 psi;
+- os módulos críticos estão online.
+
+Os limites são inclusivos. Qualquer falha gera `0` (comprometida no modelo),
+explica os critérios reprovados e bloqueia a decolagem. Energia e reserva são
+avaliadas separadamente; integridade `1` não garante autorização para decolar.
+Os alertas de correlação também continuam sendo avaliados.
+
+Esta é uma estimativa operacional didática. Temperaturas, pressão e módulos não
+comprovam a ausência de danos físicos no casco: uma avaliação estrutural real
+exigiria sensores específicos. A aplicação usa as cinco leituras informadas,
+sem conexão com sensores reais e sem perguntar ao usuário se a nave está íntegra.
 
 ## Como funciona
 
@@ -54,7 +72,7 @@ Seis parâmetros comparados com faixas predefinidas:
 | :--- | :--- | :--- |
 | Temperatura interna | 15 °C a 30 °C | fora da faixa |
 | Temperatura externa | −10 °C a 45 °C | fora da faixa |
-| Integridade estrutural | apenas 1 | diferente de 1 |
+| Integridade operacional estimada | 1, calculada pelo sistema | 0: algum critério de integridade falhou |
 | Pressão dos tanques | 450 a 550 psi | fora da faixa |
 | Nível de energia | mínimo de 80 % | abaixo de 80 % |
 | Módulos críticos | todos online | qualquer um offline |
@@ -103,13 +121,14 @@ autorização, nunca ligar uma que a IA desligou.
 
 ```mermaid
 graph TD
-    A[Início: Coleta de Telemetria] --> B{Temp Interna OK?}
+    A[Coleta de cinco dados de telemetria] --> AUTO[Calcular integridade: temperaturas, pressão e módulos]
+    AUTO --> B{Temp Interna OK?}
 
     B -- Não --> C[Erro: Temp Interna]
     B -- Sim --> D{Temp Externa OK?}
 
     D -- Não --> F[Erro: Temp Externa]
-    D -- Sim --> G{Integridade OK?}
+    D -- Sim --> G{Integridade calculada = 1?}
 
     G -- Não --> H[Erro: Integridade]
     G -- Sim --> I{Pressão Tanques OK?}
@@ -160,7 +179,7 @@ chegar à IA.
 **Python 3.6 ou superior** é o único requisito obrigatório.
 
 **Não é necessário instalar nenhuma dependência.** O programa usa apenas a
-biblioteca padrão do Python (`csv`, `os`, `datetime`). Não há
+biblioteca padrão do Python (`csv`, `os`, `math`, `datetime`). Não há
 `requirements.txt` porque não há o que instalar.
 
 Para verificar se o Python já está instalado, abra o terminal e digite:
@@ -197,23 +216,23 @@ python scripts/main.py
 ```
 
 O programa começa pedindo o nome do capitão (só para o registro) e depois
-solicita os seis parâmetros pelo teclado, um de cada vez:
+solicita os cinco dados pelo teclado, um de cada vez:
 
 | Pergunta | O que digitar | Exemplo |
 | :--- | :--- | :--- |
 | Identifique-se, capitão | seu nome | `Douglas` |
 | Temperatura interna | número em °C | `23` |
 | Temperatura externa | número em °C | `20` |
-| Integridade | `1` para boa, `0` para comprometida | `1` |
 | Pressão dos tanques | número em psi | `495` |
 | Porcentagem de energia | número de 0 a 100 | `92` |
 | Módulos online | `S` para sim, `N` para não | `S` |
 
 Use **ponto** para decimais (`22.5`), não vírgula — é a notação que o Python
-entende. A integridade só aceita `1` ou `0`: qualquer outra coisa recebe uma
-mensagem de erro e a pergunta se repete.
+entende. Valores não numéricos, NaN e infinito são rejeitados e a pergunta se
+repete. Para os módulos, somente `S` ou `N` são aceitos. A integridade aparece
+na saída como resultado calculado, acompanhada dos motivos do diagnóstico.
 
-Se o veredito for MÉDIO, há uma sétima pergunta:
+Se o veredito for MÉDIO, há uma pergunta adicional de decisão:
 `Deseja seguir com a decolagem? (s/n)`. Responder `s` mantém a decolagem;
 qualquer outra resposta aborta.
 
@@ -228,7 +247,7 @@ Terra → Marte (item 4 abaixo); se for abortada, ele encerra com a mensagem
 `MISSAO CANCELADA`.
 
 Para reproduzir os cenários da tabela mais abaixo, basta digitar as
-entradas de cada linha. Para recomeçar a numeração do zero, apague os arquivos
+cinco entradas de cada linha; a coluna de integridade é um resultado. Para recomeçar a numeração do zero, apague os arquivos
 da pasta `cenarios/` antes.
 
 ### 3. Abrir o notebook
@@ -310,7 +329,7 @@ decolagem é o do item 1.4: 300 kWh após a aplicação das perdas energéticas.
 | Sintoma | Causa provável | Solução |
 | :--- | :--- | :--- |
 | `python: command not found` | Python não instalado ou fora do PATH | Reinstale marcando "Add Python to PATH", ou tente `python3` |
-| `ValueError: could not convert string to float` | Foi digitado texto ou vírgula onde se espera número | Use apenas números, com ponto decimal (`22.5`) |
+| Mensagem `Valor inválido` | Foi digitado texto ou vírgula onde se espera número | Use apenas números, com ponto decimal (`22.5`) |
 | Acentos aparecem como `?` ou `Ã§` no terminal | Codificação do console do Windows | Rode `chcp 65001` antes, ou use o Windows Terminal |
 | `can't open file 'scripts/main.py'` | Terminal está na pasta errada | Entre na pasta raiz do projeto antes de executar |
 
@@ -322,13 +341,13 @@ Abaixo estão duas execuções reais do `scripts/main.py`, cobrindo dois resulta
 
 ### Cenário 02 — MÉDIO | decolagem autorizada com ressalvas
 
-Entrada principal: temperatura interna `25 °C`, externa `30 °C`, integridade `1`, pressão `550 psi`, energia `80%` e módulos online. O sistema identifica dois alertas de margem, classifica o cenário como **MÉDIO** e transfere a decisão ao capitão, que autoriza a decolagem.
+Entrada principal: temperatura interna `25 °C`, externa `30 °C`, pressão `550 psi`, energia `80%` e módulos online. O sistema calcula integridade `1`, identifica dois alertas de margem, classifica o cenário como **MÉDIO** e transfere a decisão ao capitão, que autoriza a decolagem.
 
 ![Execução real do cenário 02 - MÉDIO](docs/terminal_cenario_02_MEDIO.svg)
 
 ### Cenário 09 — ÓTIMO | decolagem autorizada
 
-Entrada principal: temperatura interna `20 °C`, externa `5 °C`, integridade `1`, pressão `470 psi`, energia `98%` e módulos online. Todas as verificações são aprovadas, a análise assistida não encontra discrepâncias e o cenário é classificado como **ÓTIMO**.
+Entrada principal: temperatura interna `20 °C`, externa `5 °C`, pressão `470 psi`, energia `98%` e módulos online. A integridade calculada é `1`, todas as verificações são aprovadas, a análise assistida não encontra discrepâncias e o cenário é classificado como **ÓTIMO**.
 
 ![Execução real do cenário 09 - ÓTIMO](docs/terminal_cenario_09_OTIMO.svg)
 
@@ -336,11 +355,12 @@ Entrada principal: temperatura interna `20 °C`, externa `5 °C`, integridade `1
 
 ## Cenários coletados
 
-Foram registradas 12 execuções, cobrindo as três classificações e as duas
+Os 12 cenários foram reexecutados com as cinco entradas originais e a integridade
+calculada automaticamente, cobrindo as três classificações e as duas
 respostas possíveis do capitão. Nos cenários MÉDIO a coluna "Decolagem" é a
 resposta dele:
 
-| # | Capitão | Classificação | T.int | T.ext | Integr. | Pressão | Energia | Críticos | Alertas | Decolagem |
+| # | Capitão | Classificação | T.int | T.ext | Integr. calculada | Pressão | Energia | Críticos | Alertas | Decolagem |
 | :-- | :--- | :--- | --: | --: | --: | --: | --: | --: | --: | :--- |
 | 01 | Douglas | HORRÍVEL | 10 | 50 | 0 | 350 | 70 | 0 | 1 | abortada |
 | 02 | Marcelo | MÉDIO | 25 | 30 | 1 | 550 | 80 | 0 | 2 | autorizada pelo capitão |
@@ -348,14 +368,20 @@ resposta dele:
 | 04 | Douglas | ÓTIMO | 23 | 20 | 1 | 495 | 92 | 0 | 0 | autorizada |
 | 05 | Marcelo | MÉDIO | 21 | −9 | 1 | 500 | 85 | 0 | 1 | autorizada pelo capitão |
 | 06 | Aline | MÉDIO | 29 | −8 | 1 | 535 | 93 | 0 | 3 | autorizada pelo capitão |
-| 07 | Douglas | HORRÍVEL | 22 | 25 | 0 | 500 | 90 | 0 | 0 | abortada |
+| 07 | Douglas | ÓTIMO | 22 | 25 | 1 | 500 | 90 | 0 | 0 | autorizada |
 | 08 | Marcelo | HORRÍVEL | 22 | 25 | 1 | 500 | 105 | **1** | 0 | abortada |
 | 09 | Aline | ÓTIMO | 20 | 5 | 1 | 470 | 98 | 0 | 0 | autorizada |
 | 10 | Douglas | HORRÍVEL | 24 | 28 | 1 | 505 | 55 | 0 | 0 | abortada |
 | 11 | Marcelo | MÉDIO | 25 | 30 | 1 | 450 | 90 | 0 | 1 | autorizada pelo capitão |
 | 12 | Aline | MÉDIO | 20 | 30 | 1 | 480 | 80 | 0 | 1 | **vetada pelo capitão** |
 
-Três cenários merecem destaque:
+A distribuição atual é **4 ÓTIMOS, 5 MÉDIOS e 3 HORRÍVEIS**. O cenário **07**
+passou a ÓTIMO: suas temperaturas, pressão e módulos estão adequados. O bloqueio
+anterior vinha exclusivamente do valor manual `0`, que deixou de existir como
+entrada. Os registros têm a data da nova execução e substituem os exemplos da
+lógica anterior, preservada no histórico do Git.
+
+Três outros cenários merecem destaque:
 
 O **08** é o caso em que a análise barrou o que as verificações aprovaram. Note a
 energia disponível calculada para ele: **1050 kWh em uma bateria de 1000 kWh** — a
@@ -370,11 +396,15 @@ classificação MÉDIO, e a capitã respondeu `n`. A decolagem foi abortada e a
 missão não aconteceu, com a mesma telemetria que em outro dia poderia ter sido
 liberada.
 
-As 7 decolagens autorizadas geraram as 7 missões da pasta `missoes/`.
+As 8 decolagens autorizadas geraram as 8 missões da pasta `missoes/`.
 Os registros foram recalculados com o **mesmo saldo energético do item 1.4**:
 a missão começa na energia pós-decolagem já descontadas as perdas e os 300 kWh,
 sem aplicar um segundo custo de lançamento. Os resultados atualizados ficam em
 `missoes/registro_missoes.csv` e nas respectivas caixas-pretas em TXT.
+São **6 missões concluídas com risco e 2 falhas**. As missões 06 (cenário 07)
+e 08 (cenário 11) esgotam a bateria na hora 90: a aprovação da pré-decolagem não
+garante sucesso na extensão Terra → Marte. A missão adicional desloca a numeração
+das posteriores; a ordem segue as decolagens autorizadas.
 
 ---
 
@@ -384,12 +414,15 @@ sem aplicar um segundo custo de lançamento. Os resultados atualizados ficam em
 ├── scripts/
 │   └── main.py               O PROGRAMA: verificação de decolagem + missão Terra → Marte
 ├── cenarios/                 12 cenários coletados (CSV + relatórios TXT)
-├── missoes/                  7 missões simuladas (CSV + caixa preta TXT)
+├── missoes/                  8 missões simuladas (CSV + caixa preta TXT)
+├── docs/                     PDF atualizado e imagens de execução
+├── tests/                    testes da integridade automática
 └── notebook/
     └── aurora_pbl.ipynb      notebook com os itens 1.1 a 1.5 e a leitura dos registros
 ```
 
-A reflexão crítica (item 1.6) está no relatório em PDF, entregue junto com o
+O [relatório em PDF atualizado](docs/Aurora-2.0.pdf) inclui a reflexão crítica
+(item 1.6) e é entregue junto com o
 link deste repositório. O fluxograma da decisão está na seção "Como funciona"
 deste README, em formato Mermaid, que o GitHub renderiza automaticamente.
 
@@ -408,3 +441,9 @@ Vale registrar: com 300 kWh de consumo e 8 % de perdas, a energia mínima
 *matemática* para decolar seria de cerca de 32,6 % de carga (326 kWh disponíveis,
 300 kWh úteis). O limite de 80 % não vem do consumo da decolagem — ele existe
 para garantir autonomia **depois** dela.
+
+## Validação da integridade automática
+
+Execute `python -m unittest discover -s tests -v` para verificar os limites das
+faixas, falhas individuais e combinadas, entradas inválidas, decisão do capitão
+e consistência do registro. Os testes usam pastas temporárias.

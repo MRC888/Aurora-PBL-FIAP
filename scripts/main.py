@@ -5,7 +5,7 @@
 # ROTEIRO, EM NOVE ETAPAS:
 #
 #   ETAPA 0  introducao e identificacao do capitao
-#   ETAPA 1  leitura da telemetria (seis perguntas)
+#   ETAPA 1  leitura de cinco dados e avaliacao automatica da integridade
 #   ETAPA 2  analise energetica (item 1.4)
 #   ETAPA 3  verificacoes de seguranca (item 1.2)
 #   ETAPA 4  analise assistida por IA (item 1.5)
@@ -21,7 +21,8 @@
 # COMO USAR:  python scripts/main.py
 # =====================================================================
 
-# BIBLIOTECAS USADAS PARA GRAVAR O RESULTADO DE CADA EXECUCAO EM DISCO.
+# BIBLIOTECAS PARA VALIDAR MEDIDAS E GRAVAR OS RESULTADOS EM DISCO.
+import math                     # VALIDA SE AS MEDIDAS SAO FINITAS
 import csv                      # ESCREVE PLANILHAS NO FORMATO CSV (ABRE NO EXCEL)
 import os                       # LIDA COM PASTAS E CAMINHOS DE ARQUIVO
 from datetime import datetime   # CARIMBA A DATA E HORA DE CADA EXECUCAO
@@ -155,47 +156,68 @@ print("")
 # =====================================================================
 # ETAPA 1 - LEITURA DA TELEMETRIA
 # =====================================================================
-# FLOAT SERVE PARA AS MEDIDAS CONTINUAS (TEMPERATURA, PRESSAO, ENERGIA).
-# INT SERVE PARA A INTEGRIDADE (1 OU 0) E O BOOLEANO PARA OS MODULOS ONLINE (S/N).
-# NA INTEGRIDADE, 1 SIGNIFICA ESTRUTURA BOA E 0 SIGNIFICA ESTRUTURA COMPROMETIDA.
-temp_interna = float(input("Digite a temperatura interna: "))
-temp_externa = float(input("Digite a temperatura externa: "))
+# O OPERADOR INFORMA MEDIDAS, E O SISTEMA CALCULA A INTEGRIDADE.
+# REJEITA TEXTO, NaN E INFINITO ANTES DE USAR OS DADOS NO DIAGNOSTICO.
+telemetria = []
+for pergunta in ["Digite a temperatura interna: ",
+                 "Digite a temperatura externa: ",
+                 "Digite a pressão dos tanques: ",
+                 "Digite a porcentagem de energia: "]:
+    while True:
+        try:
+            valor = float(input(pergunta))
+            if math.isfinite(valor):
+                telemetria.append(valor)
+                break
+        except ValueError:
+            pass
+        print("Valor inválido: informe um número finito. Use ponto para decimais.")
 
-# A INTEGRIDADE E UM INDICADOR BINARIO: SO ACEITA 1 OU 0. QUALQUER OUTRA COISA
-# (2, 1.0, "ok", ENTER VAZIO) RECEBE UMA MENSAGEM DE ERRO E A PERGUNTA E REPETIDA
-# ATE VIR UM VALOR VALIDO. A COMPARACAO E FEITA COMO TEXTO, ANTES DE CONVERTER
-# PARA INT, PARA QUE UMA LETRA DIGITADA NAO DERRUBE O PROGRAMA.
-entrada_integridade = input("Digite a integridade (1 para Boa, 0 para Comprometida): ").strip()
-while entrada_integridade != "1" and entrada_integridade != "0":
-    print("Erro: '{}' não é um valor válido. A integridade é binária: digite 1 (Boa) ou 0 (Comprometida).".format(entrada_integridade))
-    entrada_integridade = input("Digite a integridade (1 para Boa, 0 para Comprometida): ").strip()
-integridade = int(entrada_integridade)
+temp_interna, temp_externa, pressao_tanques, energia = telemetria
+entrada_modulos = input("Módulos online? (S/N): ").strip().upper()
+while entrada_modulos not in ("S", "N"):
+    print("Valor inválido: informe S ou N para o estado dos módulos.")
+    entrada_modulos = input("Módulos online? (S/N): ").strip().upper()
+modulos_online = entrada_modulos == "S"
 
-pressao_tanques = float(input("Digite a pressão dos tanques: "))
-energia = float(input("Digite a porcentagem de energia: "))
-modulos_online = input("Módulos online? (S/N): ").strip().upper() == "S"
-# O STRIP() TIRA ESPACOS ANTES E DEPOIS, O UPPER() CONVERTE PARA MAIUSCULO, E O
-# == "S" VERIFICA SE O USUARIO DIGITOU "S" PARA SIM, RETORNANDO TRUE OU FALSE.
+# INTEGRIDADE OPERACIONAL ESTIMADA, DERIVADA DA TELEMETRIA.
+# ESTES CRITERIOS DIDATICOS NAO SUBSTITUEM SENSORES DE DANOS NO CASCO.
+# ENERGIA E RESERVA SAO AVALIADAS SEPARADAMENTE NA ETAPA ENERGETICA.
+motivos_integridade = []
+if not TEMP_INTERNA_MIN <= temp_interna <= TEMP_INTERNA_MAX:
+    motivos_integridade.append("temperatura interna fora da faixa segura")
+if not TEMP_EXTERNA_MIN <= temp_externa <= TEMP_EXTERNA_MAX:
+    motivos_integridade.append("temperatura externa fora da faixa segura")
+if not PRESSAO_MIN <= pressao_tanques <= PRESSAO_MAX:
+    motivos_integridade.append("pressão dos tanques fora da faixa segura")
+if not modulos_online:
+    motivos_integridade.append("módulos críticos offline")
+integridade = int(not motivos_integridade)
+if motivos_integridade:
+    diagnostico_integridade = "; ".join(motivos_integridade)
+else:
+    diagnostico_integridade = "temperaturas e pressão nas faixas seguras; módulos críticos online"
 
 # CONVERTE OS DOIS INDICADORES PARA TEXTO LEGIVEL (USADO NA TELA E NOS REGISTROS).
 if integridade == 1:
-    integridade_texto = "1 (Boa)"
+    integridade_texto = "1 (Preservada no modelo)"
 else:
-    integridade_texto = "0 (Comprometida)"
+    integridade_texto = "0 (Comprometida no modelo)"
 
 if modulos_online:
     modulos_texto = "SIM"
 else:
     modulos_texto = "NAO"
 
-# MOSTRA DE VOLTA O QUE O CAPITAO INFORMOU, ANTES DE QUALQUER VERIFICACAO.
+# MOSTRA AS LEITURAS E O DIAGNOSTICO CALCULADO PELO SISTEMA.
 print("")
 print("=" * 62)
-print("TELEMETRIA INFORMADA")
+print("TELEMETRIA E DIAGNOSTICO AUTOMATICO")
 print("=" * 62)
 print("  Temperatura interna : {:.1f} C".format(temp_interna))
 print("  Temperatura externa : {:.1f} C".format(temp_externa))
-print("  Integridade         : {}".format(integridade_texto))
+print("  Integridade calculada: {}".format(integridade_texto))
+print("  Diagnostico         : {}".format(diagnostico_integridade))
 print("  Pressao dos tanques : {:.1f} psi".format(pressao_tanques))
 print("  Energia             : {:.1f} %".format(energia))
 print("  Modulos online      : {}".format(modulos_texto))
@@ -261,12 +283,12 @@ else:
     print("Temperatura Externa: OK")
 
 # Verificacao 2 - INTEGRIDADE
-# TESTA "DIFERENTE DE 1" E NAO "MENOR QUE 1": SO O 1 SIGNIFICA ESTRUTURA BOA.
+# O RESULTADO FOI CALCULADO NA ETAPA 1, SEM PERGUNTAR A INTEGRIDADE AO CAPITAO.
 if integridade != 1:
-    print("Erro: Integridade comprometida!")
+    print("Erro: Integridade operacional comprometida no modelo!")
     decolagem_autorizada = False
 else:
-    print("Integridade: Boa")
+    print("Integridade operacional: Preservada no modelo")
 
 # Verificacao 3 - PRESSAO DOS TANQUES
 if pressao_tanques < PRESSAO_MIN or pressao_tanques > PRESSAO_MAX:
@@ -488,10 +510,11 @@ relatorio_cenario.append("Capitao      : " + nome_capitao)
 relatorio_cenario.append("Classificacao: " + classificacao)
 relatorio_cenario.append("=" * 62)
 relatorio_cenario.append("")
-relatorio_cenario.append("DADOS DE TELEMETRIA INFORMADOS")
+relatorio_cenario.append("TELEMETRIA E DIAGNOSTICO AUTOMATICO")
 relatorio_cenario.append("  Temperatura interna : {:.1f} C".format(temp_interna))
 relatorio_cenario.append("  Temperatura externa : {:.1f} C".format(temp_externa))
-relatorio_cenario.append("  Integridade         : {}".format(integridade_texto))
+relatorio_cenario.append("  Integridade calculada: {}".format(integridade_texto))
+relatorio_cenario.append("  Diagnostico         : {}".format(diagnostico_integridade))
 relatorio_cenario.append("  Pressao dos tanques : {:.1f} psi".format(pressao_tanques))
 relatorio_cenario.append("  Energia             : {:.1f} %".format(energia))
 relatorio_cenario.append("  Modulos online      : " + modulos_texto)

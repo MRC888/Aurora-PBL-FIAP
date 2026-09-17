@@ -1,14 +1,15 @@
 ==============================================================
 PROJETO AURORA - REGISTRO DE EXECUCAO Nº 03
-Data/hora    : 12/09/2026 16:16:06
+Data/hora    : 16/09/2026 21:37:19
 Capitao      : Aline
 Classificacao: OTIMO
 ==============================================================
 
-DADOS DE TELEMETRIA INFORMADOS
+TELEMETRIA E DIAGNOSTICO AUTOMATICO
   Temperatura interna : 25.0 C
   Temperatura externa : 30.0 C
-  Integridade         : 1 (Boa)
+  Integridade calculada: 1 (Preservada no modelo)
+  Diagnostico         : temperaturas e pressão nas faixas seguras; módulos críticos online
   Pressao dos tanques : 480.0 psi
   Energia             : 100.0 %
   Modulos online      : SIM
