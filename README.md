@@ -121,54 +121,34 @@ autorização, nunca ligar uma que a IA desligou.
 
 ```mermaid
 graph TD
-    A[Coleta de cinco dados de telemetria] --> AUTO[Calcular integridade: temperaturas, pressão e módulos]
-    AUTO --> B{Temp Interna OK?}
-
-    B -- Não --> C[Erro: Temp Interna]
-    B -- Sim --> D{Temp Externa OK?}
-
-    D -- Não --> F[Erro: Temp Externa]
-    D -- Sim --> G{Integridade calculada = 1?}
-
-    G -- Não --> H[Erro: Integridade]
-    G -- Sim --> I{Pressão Tanques OK?}
-
-    I -- Não --> J[Erro: Pressão]
-    I -- Sim --> K{Energia OK?}
-
-    K -- Não --> L[Erro: Energia]
-    K -- Sim --> M{Módulos Online?}
-
-    M -- Não --> N[Erro: Módulos]
-    M -- Sim --> IA[ANÁLISE ASSISTIDA POR IA]
-
-    C --> IA
-    F --> IA
-    H --> IA
-    J --> IA
-    L --> IA
-    N --> IA
-
-    IA -- Erro de segurança ou telemetria não confiável --> P1[HORRÍVEL]
-    IA -- Alertas --> P2[MÉDIO]
-    IA -- Sem discrepâncias --> P3[ÓTIMO]
-
-    P1 --> E(Decolagem Não Autorizada)
-    P2 --> Q[Decolagem em espera]
-    Q --> CAP{Capitão autoriza?}
-    CAP -- Não --> E
-    CAP -- Sim --> R2(Missão em andamento, com ressalvas)
-    P3 --> R3(Missão em andamento)
+    A[Coleta e validação de cinco leituras] --> B[Calcular integridade e motivos]
+    B --> EN[Calcular perdas, energia útil e reserva]
+    EN --> C[Executar TODAS as verificações de segurança]
+    C --> D[Acumular falhas de temperatura, integridade, pressão, energia e módulos]
+    D --> IA[Análise assistida: dados impossíveis e alertas]
+    IA --> F{Há falha de segurança ou dado impossível?}
+    F -- Sim --> H[HORRÍVEL]
+    H --> AB[DECOLAGEM ABORTADA]
+    F -- Não --> Q{Há alertas?}
+    Q -- Não --> O[ÓTIMO]
+    O --> OK[PRONTO PARA DECOLAR]
+    Q -- Sim --> M[MÉDIO: decolagem em espera]
+    M --> CAP{Capitão responde s?}
+    CAP -- Não --> AB
+    CAP -- Sim --> OK
+    AB --> R[Gravar cenário e motivos]
+    OK --> R
+    R --> V{Decolagem autorizada?}
+    V -- Não --> FIM[Fim: missão cancelada]
+    V -- Sim --> MIS[Simular e registrar missão Terra - Marte]
 ```
 
-Todo caminho passa pela análise por IA, inclusive os que já falharam em uma
-verificação: é ela que faz a triagem final e classifica o cenário. Um erro de
-segurança ou um dado fisicamente impossível dá HORRÍVEL, e a decolagem é
-abortada. Dados válidos em combinação de risco dão MÉDIO, e a decisão vai para o
-capitão. Nenhuma discrepância dá ÓTIMO. Para não poluir o diagrama, as setas que
-ligam cada erro à verificação seguinte foram omitidas; no código uma falha **não
-interrompe** as demais verificações, todas rodam e os erros se acumulam antes de
-chegar à IA.
+Todas as verificações são executadas antes da classificação. As falhas se
+acumulam e a análise assistida também roda nos cenários já bloqueados. Um erro
+de segurança ou dado impossível resulta em HORRÍVEL e impede a decolagem.
+Sem falhas, alertas resultam em MÉDIO e exigem a decisão do capitão; sem alertas,
+o cenário é ÓTIMO. O TXT registra as falhas, os alertas, a decisão humana quando
+aplicável e o veredito final.
 
 ---
 
@@ -247,8 +227,10 @@ Terra → Marte (item 4 abaixo); se for abortada, ele encerra com a mensagem
 `MISSAO CANCELADA`.
 
 Para reproduzir os cenários da tabela mais abaixo, basta digitar as
-cinco entradas de cada linha; a coluna de integridade é um resultado. Para recomeçar a numeração do zero, apague os arquivos
-da pasta `cenarios/` antes.
+cinco entradas de cada linha; todos esses exemplos usam módulos `S`, e a coluna
+de integridade é um resultado. Nos MÉDIOS, responda `s`, exceto no cenário 12
+(`n`). Para iniciar uma coleta separada, use uma cópia limpa do projeto sem os
+registros de `cenarios/` e `missoes/`.
 
 ### 3. Abrir o notebook
 

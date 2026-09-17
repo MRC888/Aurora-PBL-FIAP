@@ -262,6 +262,7 @@ else:
 # FORA DA FAIXA, A CHAVE DE DECOLAGEM E DESLIGADA E O ERRO E INFORMADO.
 # AS VERIFICACOES NAO PARAM NA PRIMEIRA FALHA: TODAS SAO EXECUTADAS, PARA O
 # OPERADOR ENXERGAR TODOS OS PROBLEMAS DE UMA VEZ.
+erros_seguranca = []       # MOTIVOS PERSISTIDOS NO RELATORIO TXT
 decolagem_autorizada = True   # A CHAVE COMECA LIGADA; QUALQUER VERIFICACAO PODE DESLIGAR.
 
 print("")
@@ -272,12 +273,14 @@ print("=" * 62)
 # Verificacao 1 - TEMPERATURA INTERNA E EXTERNA
 if temp_interna > TEMP_INTERNA_MAX or temp_interna < TEMP_INTERNA_MIN:
     print("Erro: Temperatura Interna fora do range!")
+    erros_seguranca.append("Erro: Temperatura Interna fora do range!")
     decolagem_autorizada = False
 else:
     print("Temperatura Interna: OK")
 
 if temp_externa > TEMP_EXTERNA_MAX or temp_externa < TEMP_EXTERNA_MIN:
     print("Erro: Temperatura Externa fora do range!")
+    erros_seguranca.append("Erro: Temperatura Externa fora do range!")
     decolagem_autorizada = False
 else:
     print("Temperatura Externa: OK")
@@ -286,6 +289,7 @@ else:
 # O RESULTADO FOI CALCULADO NA ETAPA 1, SEM PERGUNTAR A INTEGRIDADE AO CAPITAO.
 if integridade != 1:
     print("Erro: Integridade operacional comprometida no modelo!")
+    erros_seguranca.append("Erro: Integridade operacional comprometida no modelo!")
     decolagem_autorizada = False
 else:
     print("Integridade operacional: Preservada no modelo")
@@ -293,6 +297,7 @@ else:
 # Verificacao 3 - PRESSAO DOS TANQUES
 if pressao_tanques < PRESSAO_MIN or pressao_tanques > PRESSAO_MAX:
     print("Erro: Pressão dos tanques fora do range!")
+    erros_seguranca.append("Erro: Pressão dos tanques fora do range!")
     decolagem_autorizada = False
 else:
     print("Pressão dos Tanques: OK")
@@ -300,6 +305,7 @@ else:
 # Verificacao 4 - ENERGIA
 if energia < ENERGIA_MINIMA:
     print("Erro: Energia insuficiente!")
+    erros_seguranca.append("Erro: Energia insuficiente!")
     decolagem_autorizada = False
 elif energia_restante < CAPACIDADE_TOTAL * RESERVA_MINIMA:
     # DECOLA MAS NAO SOBRA CARGA PARA MANOBRA/POUSO -> TAMBEM ABORTA.
@@ -307,6 +313,7 @@ elif energia_restante < CAPACIDADE_TOTAL * RESERVA_MINIMA:
     # JA DEIXA 43,6% DE SOBRA. ELE PASSA A VALER SE CONSUMO_DECOLAGEM SUBIR
     # (EX: 600 kWh) OU SE ENERGIA_MINIMA DESCER.
     print("Erro: Reserva pós-decolagem insuficiente ({:.1f} kWh)!".format(energia_restante))
+    erros_seguranca.append("Erro: Reserva pós-decolagem insuficiente ({:.1f} kWh)!".format(energia_restante))
     decolagem_autorizada = False
 else:
     print("Energia: OK")
@@ -314,6 +321,7 @@ else:
 # Verificacao 5 - MODULOS ONLINE
 if not modulos_online:
     print("Erro: Módulos offline!")
+    erros_seguranca.append("Erro: Módulos offline!")
     decolagem_autorizada = False
 else:
     print("Módulos: OK")
@@ -527,6 +535,13 @@ relatorio_cenario.append("  Energia util             : {:.1f} kWh".format(energi
 relatorio_cenario.append("  Consumo na decolagem     : {:.1f} kWh".format(CONSUMO_DECOLAGEM))
 relatorio_cenario.append("  Energia apos a decolagem : {:.1f} kWh ({:.1f}%)".format(energia_restante, autonomia_restante))
 relatorio_cenario.append("")
+relatorio_cenario.append("VERIFICACOES DE SEGURANCA")
+if erros_seguranca:
+    for item in erros_seguranca:
+        relatorio_cenario.append("  [X] " + item)
+else:
+    relatorio_cenario.append("  Todas as verificacoes aprovadas.")
+relatorio_cenario.append("")
 relatorio_cenario.append("ANALISE ASSISTIDA POR IA")
 
 if criticos:
@@ -541,6 +556,14 @@ if alertas:
 
 if not criticos and not alertas:
     relatorio_cenario.append("  Nenhuma discrepancia encontrada.")
+
+if classificacao == "MEDIO":
+    relatorio_cenario.append("")
+    relatorio_cenario.append("DECISAO DO CAPITAO")
+    if decolagem_autorizada:
+        relatorio_cenario.append("  Decolagem autorizada pelo capitao (resposta s).")
+    else:
+        relatorio_cenario.append("  Decolagem vetada pelo capitao (resposta diferente de s).")
 
 relatorio_cenario.append("")
 if decolagem_autorizada:

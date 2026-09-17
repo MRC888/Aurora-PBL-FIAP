@@ -34,6 +34,11 @@ class IntegridadeAutomaticaTest(unittest.TestCase):
         self.assertFalse(any('integridade' in p.lower() for p in prompts))
         self.assertEqual(int(linha['integridade']), estado['integridade'])
         self.assertIn(estado['diagnostico_integridade'], registro)
+        for motivo in estado['erros_seguranca']:
+            self.assertIn(motivo, registro)
+        if estado['classificacao'] == 'MEDIO':
+            decisao = 'autorizada' if estado['decolagem_autorizada'] else 'vetada'
+            self.assertIn('Decolagem ' + decisao + ' pelo capitao', registro)
         self.assertIn(estado['diagnostico_integridade'], saida.getvalue())
         return estado, prompts, saida.getvalue()
 
